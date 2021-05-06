@@ -44,7 +44,7 @@ namespace PresentationLayer
             while (true)
             {
                 
-                //måske clear b og lave alle om til d igen, så det fungere ens. 
+                //måske clear b og lave alle om til d igen, så det fungere ens. test
                 int a = Encoder.getDiff(true);
                 if (a < 0)
                     a = -a;
