@@ -14,7 +14,7 @@ namespace LogicLayer
             p = new Person();
             borger = new List<Person>();
         }
-        public bool validate(uint CPRNumber)
+        public bool validate(string CPRNumber)
         {
             return true;
             //skal validere om en patient eksistere i databasen

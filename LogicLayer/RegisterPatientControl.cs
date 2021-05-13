@@ -7,7 +7,7 @@ namespace LogicLayer
 {
     public class RegisterPatientControl
     {
-        private uint CPRNumber;
+        private string CPRNumber;
         private CPR_Register cprR;
 
         public RegisterPatientControl()
@@ -24,7 +24,7 @@ namespace LogicLayer
             if (cprR.validate(CPRNumber) == true)
                 patientValidated();
         }
-        public void registrerPatient(uint CPRNumber_)
+        public void registrerPatient(string CPRNumber_)
         {
             CPRNumber = CPRNumber_;
             if (cprR.validate(CPRNumber) == true)
