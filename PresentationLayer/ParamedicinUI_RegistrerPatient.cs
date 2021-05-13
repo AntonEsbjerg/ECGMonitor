@@ -225,7 +225,7 @@ namespace PresentationLayer
         public void displayValidatedPatient(string[] displayP)
         {
             Display.lcdClear();
-            for (byte i = 0; i < 4; i++)
+            for (byte i = 0; i < displayP.Length; i++)
             {
                 Display.lcdGotoXY(0, i);
                 Display.lcdPrint(displayP[i]);

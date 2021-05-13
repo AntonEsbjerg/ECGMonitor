@@ -61,8 +61,6 @@ namespace DataLayer
 
             }
 
-
-
             return patientObjekter;
                
         }

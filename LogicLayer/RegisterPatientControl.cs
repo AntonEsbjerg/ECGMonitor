@@ -29,7 +29,7 @@ namespace LogicLayer
             //skal kalde validate, hvis true, så kald validated
             
             if (cprR.validate(CPRNumber_) == true)
-                return patientValidated();
+                return patientValidated(CPRNumber_);
             else
             {
                 return ikkeRegistreretP;
@@ -40,7 +40,7 @@ namespace LogicLayer
 
             
             if (cprR.validate(CPRNumber_) == true)
-                return patientValidated();
+                return patientValidated(CPRNumber_);
             else
             {
                 return ikkeRegistreretP;
@@ -51,7 +51,7 @@ namespace LogicLayer
         {
             
             if (cprR.validate(defaultpatient) == true)
-                return patientValidated();
+                return patientValidated(defaultpatient);
             else
             {
                 return ikkeRegistreretP;
@@ -59,9 +59,9 @@ namespace LogicLayer
             //Oprettes en default patient med unikt ID
             //Oprettes en ny person
         }
-        public string[] patientValidated()
+        public string[] patientValidated(string CPRNumber_)
         {
-            patientData = p.findData(CPRNumber);
+            patientData = p.findData(CPRNumber_);
             string[] patienArr = new string[4];
             foreach(var data in patientData)
             {
@@ -73,6 +73,8 @@ namespace LogicLayer
 
             return patienArr;
         }
+
+
     }
 
 }
