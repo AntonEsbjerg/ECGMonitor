@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataLayer
 {
-    class Batteristatus
-    {
-    }
+   class Batteristatus
+   {
+   }
 }

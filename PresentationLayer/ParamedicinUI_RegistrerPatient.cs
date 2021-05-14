@@ -12,7 +12,7 @@ namespace PresentationLayer
     {
         static SerLCD Display;
         static TWIST Encoder;
-        private RegisterPatientControl RPcontrol;
+        private RegistrerPatientControl RPcontrol;
         private string CPRNumber1;
         private string[] patientData;
         public ParamedicinUI_RegistrerPatient()
@@ -20,7 +20,7 @@ namespace PresentationLayer
             patientData = new string[4];
             Display = new SerLCD();
             Encoder = new TWIST();
-            RPcontrol = new RegisterPatientControl();
+            RPcontrol = new RegistrerPatientControl();
 
         }
         public void registrerPatientMenu()
@@ -225,7 +225,7 @@ namespace PresentationLayer
         public void displayValidatedPatient(string[] displayP)
         {
             Display.lcdClear();
-            for (byte i = 0; i < 4; i++)
+            for (byte i = 0; i < displayP.Length; i++)
             {
                 Display.lcdGotoXY(0, i);
                 Display.lcdPrint(displayP[i]);
