@@ -23,12 +23,12 @@ namespace LogicLayer
         }
         public string[] cardScan(string CPRNumber_)
         {
-            
+            CPRNumber = CPRNumber_;
             //Parameter skulle have været "card"
             //Metode der skulle have scannet sygesikring
             //skal kalde validate, hvis true, så kald validated
             
-            if (cprR.validate(CPRNumber_) == true)
+            if (cprR.validate(CPRNumber) == true)
                 return patientValidated();
             else
             {
@@ -37,9 +37,9 @@ namespace LogicLayer
         }
         public string[] registrerPatient(string CPRNumber_)
         {
+            CPRNumber = CPRNumber_;
 
-            
-            if (cprR.validate(CPRNumber_) == true)
+            if (cprR.validate(CPRNumber) == true)
                 return patientValidated();
             else
             {
@@ -49,8 +49,8 @@ namespace LogicLayer
         }
         public string[] defaultPatient(string defaultpatient)
         {
-            
-            if (cprR.validate(defaultpatient) == true)
+            CPRNumber = defaultpatient;
+            if (cprR.validate(CPRNumber) == true)
                 return patientValidated();
             else
             {
