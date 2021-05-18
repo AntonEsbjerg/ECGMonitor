@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using DataLayer;
 using DTO;
+using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace LogicLayer
 {

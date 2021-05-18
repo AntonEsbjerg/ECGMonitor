@@ -5,6 +5,8 @@ using RaspberryPiCore.TWIST;
 using System;
 using System.Threading;
 using LogicLayer;
+using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace PresentationLayer
 {
@@ -13,31 +15,35 @@ namespace PresentationLayer
     {
         static SerLCD Display;
         static TWIST Encoder;
+        private string CPRNumber;
+        private MeasureECGControl ECGControl;
+        public double[] ECGMaalinger { get; set; }
+        private ADC1015 adc;
+
         public ParamedicinUI_MeasureECG()
         {
+            adc = new ADC1015();
+            ECGControl = new MeasureECGControl();
             Display = new SerLCD();
             Encoder = new TWIST();
         }
-        public void startMaaling()
+        public void startMaaling(string CPRNumber)
         {
             byte c=0;
+            byte d=0;
+            bool udbryder = false;
+            bool RPiAnalyse;
+            int doctorAnalyse=0;
             Display.lcdClear();
             Display.lcdNoBlink();
-            Display.lcdNoCursor();
-            Display.lcdPrint("Maalingen er i");
-            Display.lcdGotoXY(0, 1);
-            Display.lcdPrint("gang...");
-            System.Threading.Thread.Sleep(1000); //skal være 10sek
-            Display.lcdHome();
-            blinkBlack();
-            Display.lcdPrint("Afventer analyse");
-            Display.lcdGotoXY(0, 1);
-            Display.lcdPrint("Vaelg for at forsætte:");
-            Display.lcdGotoXY(0, 2);
-            Display.lcdPrint("Ingen STEMI");
-            Display.lcdGotoXY(0, 3);
-            Display.lcdPrint("Mulig STEMI");
-            Display.lcdBlink();
+            string[] ECGMenu = new string[3] { "Meassure ECG", "Start Maaling", "Tilbage"};
+            foreach (var item in ECGMenu) // ECGMenu bliver indlæst
+            {
+                Display.lcdGotoXY(0, d);
+                Display.lcdPrint(ECGMenu[d]);
+                d++;                
+            }
+
             while (true)
             {
                 int a = Encoder.getDiff(true);
@@ -45,48 +51,96 @@ namespace PresentationLayer
                 {
                     if (i < 2)
                     {
-                        c = Convert.ToByte(i + 2);
+                        c = Convert.ToByte(i+1);
                         Display.lcdGotoXY(0, c);
-                    }
-
+                    }                          
                 }
                 if (Encoder.isPressed())
                 {
-                    if (c == 2)
+                    switch (c)
                     {
-                        Display.lcdClear();
-                        Display.lcdPrint("Ingen STEMI fundet,");
-                        Display.lcdGotoXY(0, 1);
-                        Display.lcdPrint("afvent svar fra");
-                        Display.lcdGotoXY(0, 2);
-                        Display.lcdPrint("sygehus");
-                        if (Encoder.isPressed())
+                        case 1:
+                            {
+                                informECGStart();
+                                startECG();
+                                //ECGControl.startECG(); kan ikke oprettes i control, da den ikke kan bruge rpi osv
+                                informECGEnd();
+                                udbryder = true;
+                                break;
+                            }
+                        case 2:
+                            Program.mainMenu();
                             break;
                     }
-                    if (c == 3)
-                    {
-                        Display.lcdClear();
-                        blinkYellow();
-                        if (Encoder.isPressed())
-                            break;
-                    }
-                    else
-                        break;
                 }
+                if (udbryder) // sikrer at vi kommer helt ud, så ECG kan analyseres. 
+                    break;
+               
             }
-            //Denne metode er lang fra done.
-            //Er stoppet efter mulig STEMI
+            
+            RPiAnalyse = ECGControl.analyzeECG(ECGMaalinger);
+            if(RPiAnalyse==true)
+            {
+                informPossibleSTEMI();
+            }
+            else
+            {
+                informPossibleNoSTEMI();
+            }
+            //Nu skal ECG oploades i databasen
+            ECGControl.convertToBlobAndUpload(ECGMaalinger); // metoden går igennem logiklaget, så reglerne overholdes.
+            //Nu er målingen uploaded og vi afventer nu svar fra hospitalet om hvad diagnosen er
+            while(doctorAnalyse != 1 || doctorAnalyse != 2) //ved værdi 0 er der ikke svar endnu. Ellers er der svar
+            {
+                doctorAnalyse = ECGControl.confirmSTEMI(CPRNumber);
+                System.Threading.Thread.Sleep(5000);
+            }
+            
+            switch(doctorAnalyse)
+            {
+                case 1:
+                    alarmSTEMI();
+                    break;
+                case 2:
+                    noSTEMI();
+                    break;
+            }
+
+
+
+            //Herefter skal lige tænkes over, hvor den så skal hen.
         }
-        static void blinkRed()
+        public double[] startECG()
+        {
+            double sample;            
+            Array.Clear(ECGMaalinger, 0, ECGMaalinger.Length);
+            for (int i = 0; i < 10 * 50; i++)
+            {
+                //opsamler datapunkter og konvertere fra heltal i 11 bit format til volt:
+                sample = (adc.readADC_SingleEnded(0) / 2048.0) * 6.144;
+                //System.Diagnostics.Debug.WriteLine("input fra adc:    :  " + sample);
+
+                //tilføjer målepunkterne til listen af grafpunker:
+                ECGMaalinger[i] = sample;
+                //EKGLine.Values.Add(sample);
+
+                //mellem hver måling skal man pause en lille smule for at holde styr på hvor mange
+                //gange vi sampler pr. sek                
+                System.Threading.Thread.Sleep((1000 / 50) - 4);
+            }
+            return ECGMaalinger;
+        }
+        public void alarmSTEMI()
         {
             Display.lcdClear();
-            Display.lcdPrint("EKG-Analyseret");
-            Display.lcdGotoXY(0, 1);
-            Display.lcdPrint("Tegn På STEMI");
-            Display.lcdGotoXY(0, 2);
-            Display.lcdPrint("Nærmeste PCI-Center");
-            Display.lcdGotoXY(0, 3);
-            Display.lcdPrint("Adresse:");
+            byte d = 0;
+            string[] alarmSTEMI = new string[4] { "ECG-Analyseret", "Tegn på STEMI", "Nærmeste PCI-Center", "Vej 1, 8200" };
+            foreach (var item in alarmSTEMI) // AlarmsSTEMi bliver indlæst
+            {
+                Display.lcdGotoXY(0, d);
+                Display.lcdPrint(alarmSTEMI[d]);
+                d++;
+            }
             for (int i = 0; i < 4; i++)
             {
                 Display.lcdSetBackLight(255, 0, 0);
@@ -94,13 +148,52 @@ namespace PresentationLayer
                 blinkGreen();
                 System.Threading.Thread.Sleep(250);
             }
+            while(true)
+            {
+                if (Encoder.isPressed())
+                    break;
+            }
         }
-        static void blinkGreen()
+
+        public void noSTEMI()
+        {
+            Display.lcdClear();
+            byte d = 0;
+            string[] noSTEMI = new string[3] { "ECG Analyseret", "Ingen STEMI fundet", "Tryk for accept"};
+            foreach (var item in noSTEMI) // noSTEMi bliver indlæst
+            {
+                Display.lcdGotoXY(0, d);
+                Display.lcdPrint(noSTEMI[d]);
+                d++;
+            }
+            while (true)
+            {
+                if (Encoder.isPressed())
+                    break;
+            }
+        }
+        public void blinkGreen()
         {
             Display.lcdSetBackLight(0, 255, 0);
-
         }
-        static void blinkYellow()
+        public void informPossibleNoSTEMI()
+        {
+            Display.lcdClear();
+            byte d = 0;
+            string[] noSTEMI = new string[3] { "Ingen STEMI fundet", "afvent svar fra", "sygehus" };
+            foreach (var item in noSTEMI) // noSTEMi bliver indlæst
+            {
+                Display.lcdGotoXY(0, d);
+                Display.lcdPrint(noSTEMI[d]);
+                d++;
+            }
+            while (true)
+            {
+                if (Encoder.isPressed())
+                    break;
+            }
+        }
+        public void informPossibleSTEMI()
         {
             Display.lcdClear();
             Display.lcdPrint("Mulig STEMI!");
@@ -111,9 +204,25 @@ namespace PresentationLayer
                 blinkGreen();
                 System.Threading.Thread.Sleep(250);
             }
-
+            while (true)
+            {
+                if (Encoder.isPressed())
+                    break;
+            }
         }
-        static void blinkBlack()
+        public void informECGStart()
+        {
+            Display.lcdClear();
+            Display.lcdPrint("Maaling igang");
+            blinkBlack();
+        }
+        public void informECGEnd()
+        {
+            Display.lcdClear();
+            Display.lcdPrint("Maaling foretaget");
+            blinkBlack();
+        }
+        public void blinkBlack()
         {
             for (int i = 0; i < 4; i++)
             {

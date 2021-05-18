@@ -5,6 +5,8 @@ using RaspberryPiCore.TWIST;
 using System;
 using System.Threading;
 using LogicLayer;
+using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 
 

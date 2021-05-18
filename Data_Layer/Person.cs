@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data.SqlClient;
 using DTO;
+//using Microsoft.Data.SqlClient;
 
 namespace DataLayer
 {
    public class Person
    {
+        public Person()
+        {
 
+        }
 
       private SqlConnection OpenConnectionST
       {
@@ -47,7 +51,7 @@ namespace DataLayer
       public List<DTO_Patient> findData(string number)
       {
          List<DTO_Patient> patientObjekter = new List<DTO_Patient>();
-         SqlDataReader rdr;
+            SqlDataReader rdr;
          string selectString = "select * from CPR_register where CPRnr= '" + number + "'";
 
          using (SqlCommand cmd = new SqlCommand(selectString, OpenConnectionST))

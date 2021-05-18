@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using DataLayer;
+using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace LogicLayer
 {
