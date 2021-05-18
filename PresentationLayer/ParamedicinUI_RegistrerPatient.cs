@@ -104,7 +104,7 @@ namespace PresentationLayer
             string cprN = "";
             byte l = 0;
             string tal = "";
-
+            Display.lcdClear();
             Display.lcdHome();
             Display.lcdPrint("Indtast CPR-Numner");
             Display.lcdGotoXY(0, 1);
@@ -112,7 +112,6 @@ namespace PresentationLayer
 
             while (true)
             {
-
                 Display.lcdGotoXY(0, 1);
                 Display.lcdPrint("       ");
                 int a = Encoder.getDiff(true);
