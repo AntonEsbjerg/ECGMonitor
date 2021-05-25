@@ -13,7 +13,6 @@ namespace DataLayer
         {
 
         }
-
       private SqlConnection OpenConnectionST
       {
          get
@@ -23,8 +22,6 @@ namespace DataLayer
             return con;
          }
       }
-      //
-
       public int findCPR(string number)
       {
          int result = 0;
@@ -43,11 +40,9 @@ namespace DataLayer
          }
          else
             result = 2;
-
          return
             result;
       }
-
       public List<DTO_Patient> findData(string number)
       {
          List<DTO_Patient> patientObjekter = new List<DTO_Patient>();
@@ -60,13 +55,9 @@ namespace DataLayer
          }
          if (rdr.Read())
          {
-            patientObjekter.Add(new DTO_Patient(number, Convert.ToString(rdr["Navn"]), Convert.ToString(rdr["Tlf"]), Convert.ToString(rdr["Adresse"])));
-
-
+                patientObjekter.Add(new DTO_Patient(number, Convert.ToString(rdr["Fornavn"]), Convert.ToString(rdr["Efternavn"]),Convert.ToString(rdr["Tlf"]), Convert.ToString(rdr["Adresse"])));
          }
-
          return patientObjekter;
-
       }
    }
 }

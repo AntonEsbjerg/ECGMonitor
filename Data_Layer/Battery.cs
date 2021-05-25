@@ -9,7 +9,6 @@ namespace DataLayer
    public class Battery
    {
       private int Bstatus;
-
       public Battery()
       {
 
