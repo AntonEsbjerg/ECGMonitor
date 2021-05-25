@@ -17,6 +17,8 @@ namespace PresentationLayer
         private RegistrerPatientControl RPcontrol;
         private string CPRNumber1;
         private string[] patientData;
+        MeasureECGControl eCGControl = new MeasureECGControl();
+
 
         public ParamedicinUI_RegistrerPatient()
         {
@@ -166,6 +168,9 @@ namespace PresentationLayer
                 }
 
             }
+            eCGControl.GetLokalinfo()._borger_cprnr = cprN;
+            eCGControl.GetLokalinfo()._borger_fornavn = patientData[1];
+            eCGControl.GetLokalinfo()._borger_efternavn = patientData[2];
             return cprN;
         }
 

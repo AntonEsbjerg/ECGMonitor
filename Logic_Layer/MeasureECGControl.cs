@@ -12,6 +12,7 @@ namespace LogicLayer
    public class MeasureECGControl
    {
         private ECGData ecgData;
+        private int maalingID;
         public MeasureECGControl()
         {
             ecgData = new ECGData();
@@ -19,6 +20,11 @@ namespace LogicLayer
         public void startECG()
         {
             //måske den skal slettes herfra igen
+        }
+        public DTO_Measurement GetLokalinfo()
+        {
+            DTO_Measurement info = ecgData.lokalmaaling();
+            return info;
         }
         public bool analyzeECG(double[] ECGMaalinger_)
         {
@@ -29,15 +35,17 @@ namespace LogicLayer
             return RPianalyseretSTEMI;
 
         }
-        public void convertToBlobAndUpload(double[] ECGMaalinger_)
+        public int convertToBlobAndUpload(DTO_Measurement nyMaaling)
         {
             //Konvertering sker direkte i datalag
-            ecgData.uploadECG(ECGMaalinger_);
+            nyMaaling._STEMI_suspected=analyzeECG(nyMaaling._lokalECG);
+            maalingID= ecgData.uploadECG(nyMaaling);
+            return maalingID;
         }
-        public int confirmSTEMI(string CPRNumber) //tjekker hele tiden efter om der er ændringer på den aktuelle plads i databasen
+        public int confirmSTEMI(string maalingID) //tjekker hele tiden efter om der er ændringer på den aktuelle plads i databasen
         {
             int result = 0;
-            ecgData.doctorAnalyses(CPRNumber);
+            result=ecgData.doctorAnalyses(maalingID);
             //skal returnere true eller false alt efter hvad lægen har uploaded til database af analyse. 
             return result;
         }

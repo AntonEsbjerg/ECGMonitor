@@ -7,18 +7,24 @@ using System.Threading;
 using LogicLayer;
 using System.Data.SqlClient;
 using Microsoft.Data.SqlClient;
+using DTO;
 
 namespace PresentationLayer
 {
 
     class ParamedicinUI_MeasureECG
     {
+        MeasureECGControl eCGControl = new MeasureECGControl();
         static SerLCD Display;
         static TWIST Encoder;
         private string CPRNumber;
+        private int maalingID;
         private MeasureECGControl ECGControl;
+        private DateTime tidspunktForMaaling;
+        private DateTime dato;
         public double[] ECGMaalinger { get; set; }
         private ADC1015 adc;
+        private DTO_Measurement nyMaaling { get; set; }
 
         public ParamedicinUI_MeasureECG()
         {
@@ -26,6 +32,7 @@ namespace PresentationLayer
             ECGControl = new MeasureECGControl();
             Display = new SerLCD();
             Encoder = new TWIST();
+
         }
         public void startMaaling(string CPRNumber)
         {
@@ -75,27 +82,27 @@ namespace PresentationLayer
                 }
                 if (udbryder) // sikrer at vi kommer helt ud, så ECG kan analyseres. 
                     break;
-               
             }
             
             RPiAnalyse = ECGControl.analyzeECG(ECGMaalinger);
             if(RPiAnalyse==true)
             {
                 informPossibleSTEMI();
+                eCGControl.GetLokalinfo()._STEMI_suspected = true;
             }
             else
             {
                 informPossibleNoSTEMI();
+                eCGControl.GetLokalinfo()._STEMI_suspected = false;
             }
             //Nu skal ECG oploades i databasen
-            ECGControl.convertToBlobAndUpload(ECGMaalinger); // metoden går igennem logiklaget, så reglerne overholdes.
+            maalingID=ECGControl.convertToBlobAndUpload(eCGControl.GetLokalinfo()); // metoden går igennem logiklaget, så reglerne overholdes.
             //Nu er målingen uploaded og vi afventer nu svar fra hospitalet om hvad diagnosen er
-            while(doctorAnalyse != 1 || doctorAnalyse != 2) //ved værdi 0 er der ikke svar endnu. Ellers er der svar
+            while(doctorAnalyse != 0 || doctorAnalyse != 1) //ved værdi 0 er der ikke svar endnu. Ellers er der svar
             {
-                doctorAnalyse = ECGControl.confirmSTEMI(CPRNumber);
+                doctorAnalyse = ECGControl.confirmSTEMI(Convert.ToString(maalingID));
                 System.Threading.Thread.Sleep(5000);
             }
-            
             switch(doctorAnalyse)
             {
                 case 1:
@@ -105,14 +112,14 @@ namespace PresentationLayer
                     noSTEMI();
                     break;
             }
-
-
-
             //Herefter skal lige tænkes over, hvor den så skal hen.
         }
         public double[] startECG()
         {
-            double sample;            
+            double sample;
+            tidspunktForMaaling = DateTime.Now;
+            eCGControl.GetLokalinfo()._start_tid = tidspunktForMaaling;
+            eCGControl.GetLokalinfo()._dato = tidspunktForMaaling.Date;
             Array.Clear(ECGMaalinger, 0, ECGMaalinger.Length);
             for (int i = 0; i < 10 * 50; i++)
             {
@@ -128,6 +135,7 @@ namespace PresentationLayer
                 //gange vi sampler pr. sek                
                 System.Threading.Thread.Sleep((1000 / 50) - 4);
             }
+            eCGControl.GetLokalinfo()._lokalECG = ECGMaalinger;
             return ECGMaalinger;
         }
         public void alarmSTEMI()

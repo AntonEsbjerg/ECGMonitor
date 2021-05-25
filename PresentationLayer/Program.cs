@@ -16,16 +16,23 @@ namespace PresentationLayer
         static TWIST Encoder;
         private static ParamedicinUI_RegistrerPatient registrerPatientUI;
         private static ParamedicinUI_MeasureECG measureECGUI;
-        private static ParamedicinUI_VisBatteristatus visBatteristatusUI;
+        private static ParamedicinUI_VisBatteristatus visBatteristatusUI; 
         public static string CPRNumber { get; set; }
         
         static void Main(string[] args)
         {
+            MeasureECGControl eCGControl = new MeasureECGControl();
             Display = new SerLCD();
             Encoder = new TWIST();
             registrerPatientUI = new ParamedicinUI_RegistrerPatient();
             measureECGUI = new ParamedicinUI_MeasureECG();
             visBatteristatusUI = new ParamedicinUI_VisBatteristatus();
+            eCGControl.GetLokalinfo()._maaleenhed_identifikation = "1007";
+            eCGControl.GetLokalinfo()._maaleformat_type = "double";
+            eCGControl.GetLokalinfo()._samplerate_hz = 50;
+            eCGControl.GetLokalinfo()._antalmaalinger = 500;
+            eCGControl.GetLokalinfo()._interval_sec = 10;
+            eCGControl.GetLokalinfo()._interval_min = 0;
             mainMenu();   
         }
         
