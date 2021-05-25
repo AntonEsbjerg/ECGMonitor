@@ -5,8 +5,6 @@ using RaspberryPiCore.TWIST;
 using System;
 using System.Threading;
 using LogicLayer;
-using System.Data.SqlClient;
-using Microsoft.Data.SqlClient;
 
 
 
@@ -26,8 +24,8 @@ namespace PresentationLayer
         }
         public void visBatteristatus()
         {
-            Bstatus = BstatusControl.requestbatterystatus(); //Modtager værdi og viser enten normal eller lav skræm. Udregningen sker i logicLayer
-            if (Bstatus > 20) // Vi har valgt grænsen ved 20%
+            Bstatus = BstatusControl.requestbatterystatus();
+            if (Bstatus > 20)
                 displayNormalBatterystatus();
             else
                 displayLowBatterystatus();
@@ -37,45 +35,31 @@ namespace PresentationLayer
         {
             Display.lcdClear();
             Display.lcdNoBlink();
+            Display.lcdPrint("Batteristatus:");
+            Display.lcdGotoXY(0, 1);
             string a = Convert.ToString(Bstatus);
-            string[] NormalB = new string[3] { "Batteristatus:", a + "%", "Tilbage" };
-            byte c = 0;
-            foreach (var item in NormalB) // Hovedmenu bliver indlæst
-            {
-                Display.lcdGotoXY(0, c);
-                Display.lcdPrint(NormalB[c]);
-                c++;
-            }
-            Display.lcdBlink();
-                        
-            while(true)
-            {
-                if (Encoder.isPressed())
-                {
+            Display.lcdPrint(a+"%"); // her skal batteristatus tages med
+            Display.lcdGotoXY(0, 2);
+            Display.lcdPrint("Tilbage");
+            Display.lcdCursor();
+            if (Encoder.isPressed())
                 Program.mainMenu();
-                }
-            }            
         }
         public void displayLowBatterystatus()
         {
             Display.lcdClear();
             Display.lcdNoBlink();
+            Display.lcdPrint("Batteristatus:");
+            Display.lcdGotoXY(0, 1);
             string a = Convert.ToString(Bstatus);
-            string[] NormalB = new string[4] { "Batteristatus:", a + "%", "Lavt batteriniveau!","Tilbage" };
-            byte c = 0;
-            foreach (var item in NormalB) // Hovedmenu bliver indlæst
-            {
-                Display.lcdGotoXY(0, c);
-                Display.lcdPrint(NormalB[c]);
-                c++;
-            }
-            Display.lcdBlink();
-
-            while(true)
-            {
-                if (Encoder.isPressed())
-                    Program.mainMenu();
-            }                            
+            Display.lcdPrint(a+"%"); //her skal batteristatus tages med
+            Display.lcdGotoXY(0, 2);
+            Display.lcdPrint("Lavt batteriniveau!");
+            Display.lcdGotoXY(0, 3);
+            Display.lcdPrint("Tilbage");
+            Display.lcdCursor();
+            if (Encoder.isPressed())
+                Program.mainMenu();
         }
     }
 }
