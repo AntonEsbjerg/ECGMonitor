@@ -68,15 +68,13 @@ namespace LogicLayer
          foreach (var data in patientData)
          {
             patienArr[0] = data.CPRnummer_;
-            patienArr[1] = data.Navn_;
-            patienArr[2] = data.Telfon_;
-            patienArr[3] = data.Addresse_;
+            patienArr[1] = data.Fornavn_;
+            patienArr[2] = data.Efternavn_;
+            patienArr[3] = data.Telfon_;
+            patienArr[4] = data.Addresse_;
          }
-
          return patienArr;
       }
-
-
    }
 
 }

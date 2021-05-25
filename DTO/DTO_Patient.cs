@@ -7,13 +7,15 @@ namespace DTO
     public class DTO_Patient
     {
         public string CPRnummer_ { get; set; }
-        public string Navn_ { get; set; }
+        public string Fornavn_ { get; set; }
+        public string Efternavn_ { get; set; }
         public string Telfon_ { get; set; }
         public string Addresse_ { get; set; }
-        public DTO_Patient(string CPRnummer, string Navn, string Telefon, string Addresse)
+        public DTO_Patient(string CPRnummer, string Fornavn, string Efternavn, string Telefon, string Addresse)
         {
             CPRnummer_ = CPRnummer;
-            Navn_ = Navn;
+            Fornavn_ = Fornavn;
+            Efternavn_ = Efternavn;
             Telfon_ = Telefon;
             Addresse_ = Addresse;
         }

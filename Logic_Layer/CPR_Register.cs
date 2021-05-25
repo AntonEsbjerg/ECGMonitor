@@ -29,7 +29,6 @@ namespace LogicLayer
             result = false;
          }
          return result;
-
          //skal validere om en patient eksistere i databasen
       }
 
