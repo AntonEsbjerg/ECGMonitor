@@ -32,16 +32,17 @@ namespace DataLayer
          using (SqlCommand cmd = new SqlCommand(selectString, OpenConnectionST))
          {
             rdr = cmd.ExecuteReader();
-         }
-         if (rdr.Read())
-         {
-            result = 1;
+                if (rdr.Read())
+                {
+                    result = 1;
 
-         }
-         else
-            result = 2;
-         return
-            result;
+                }
+                else
+                    result = 2;
+            }
+         
+         return result;
+
       }
       public List<DTO_Patient> findData(string number)
       {
