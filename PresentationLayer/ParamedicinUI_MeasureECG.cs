@@ -112,7 +112,9 @@ namespace PresentationLayer
                     noSTEMI();
                     break;
             }
-            //Herefter skal lige tænkes over, hvor den så skal hen.
+         //Herefter skal lige tænkes over, hvor den så skal hen.
+         System.Threading.Thread.Sleep(20000);
+         Program.mainMenu();
         }
         public double[] startECG()
         {
