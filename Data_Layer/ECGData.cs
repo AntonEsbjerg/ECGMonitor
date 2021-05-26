@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using System.Data.SqlClient;
+//using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using DTO;
 
 namespace DataLayer
