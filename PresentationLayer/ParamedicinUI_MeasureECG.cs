@@ -7,6 +7,7 @@ using System.Threading;
 using LogicLayer;
 using System.Data.SqlClient;
 using Microsoft.Data.SqlClient;
+using Extreme.Mathematics;
 using DTO;
 
 namespace PresentationLayer
@@ -122,7 +123,11 @@ namespace PresentationLayer
             tidspunktForMaaling = DateTime.Now;
             eCGControl.GetLokalinfo()._start_tid = tidspunktForMaaling;
             eCGControl.GetLokalinfo()._dato = tidspunktForMaaling.Date;
-            Array.Clear(ECGMaalinger, 0, ECGMaalinger.Length);
+           // Array.Clear(ECGMaalinger, 0, ECGMaalinger.Length);
+            for (int i = 0; i < ECGMaalinger.Length; i++)
+            {
+                ECGMaalinger[i] = 0;
+            }
             for (int i = 0; i < 10 * 50; i++)
             {
                 //opsamler datapunkter og konvertere fra heltal i 11 bit format til volt:

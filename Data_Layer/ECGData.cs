@@ -19,7 +19,7 @@ namespace DataLayer
         {
             get
             {
-            var con = new SqlConnection(@"Data Source=DESKTOP-PDTN5JP\SQLEXPRESS;Initial Catalog=" + db + ";User ID=" + db + ";Password=" + db + ";Connect Timeout=30;Encrypt=False;TrustServerCertificate=False");
+            var con = new SqlConnection(@"Data Source=DESKTOP-PDTN5JP\SQLEXPRESS;Initial Catalog=LokalDatabase;User ID=LokalDatabase;Password=LokalDatabase;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
 
             con.Open();
                 return con;
