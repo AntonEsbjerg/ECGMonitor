@@ -115,7 +115,7 @@ namespace PresentationLayer
             while (true)
             {
                 Display.lcdGotoXY(0, 1);
-                Display.lcdPrint("       ");
+                Display.lcdPrint("        ");
                 int a = Encoder.getDiff(true);
                 if (a < 0)
                     a = -a;
@@ -159,11 +159,12 @@ namespace PresentationLayer
                 {
                     cprN = "";
                     Display.lcdGotoXY(0, 2);
-                    Display.lcdPrint("              ");
+                    Display.lcdPrint("               ");
                 }
                 if (Encoder.isPressed() == true && l == 11)
                 {
                     cprN = "";
+                    Program.mainMenu();
                     break;
                 }
                 Display.lcdGotoXY(0, 2);
@@ -174,9 +175,13 @@ namespace PresentationLayer
                 }
 
             }
-            eCGControl.GetLokalinfo()._borger_cprnr = cprN;
-            eCGControl.GetLokalinfo()._borger_fornavn = patientData[1];
-            eCGControl.GetLokalinfo()._borger_efternavn = patientData[2];
+            if (cprN.Length==10)
+            {
+               eCGControl.GetLokalinfo()._borger_cprnr = cprN;
+               eCGControl.GetLokalinfo()._borger_fornavn = patientData[1];
+               eCGControl.GetLokalinfo()._borger_efternavn = patientData[2];
+            }
+
             return cprN;
         }
 

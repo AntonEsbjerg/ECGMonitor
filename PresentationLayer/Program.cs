@@ -24,6 +24,7 @@ namespace PresentationLayer
             MeasureECGControl eCGControl = new MeasureECGControl();
             Display = new SerLCD();
             Encoder = new TWIST();
+            CPRNumber = "";
             registrerPatientUI = new ParamedicinUI_RegistrerPatient();
             measureECGUI = new ParamedicinUI_MeasureECG();
             visBatteristatusUI = new ParamedicinUI_VisBatteristatus();
@@ -43,6 +44,8 @@ namespace PresentationLayer
             Display.lcdClear();
             Display.lcdBlink();
             byte c = 0;
+            Display.lcdSetBackLight(0, 255, 0);
+
             foreach(var item in hovedmenu) // Hovedmenu bliver indlæst
             {
                 Display.lcdGotoXY(0, c);
@@ -72,16 +75,34 @@ namespace PresentationLayer
                 {
                     switch (b)
                     {
+                        case 0:
+                           Display.lcdClear();
+                           Display.lcdSetBackLight(0, 0, 0);
+                           Display.lcdNoBlink();
+                           //Display.lcdNoDisplay();
+                           Environment.Exit(0);
+                           break;
                         case 1:
                             registrerPatientUI.registrerPatientMenu();
                             break;
                         case 2:
-                            measureECGUI.startMaaling(CPRNumber); //Der skal være givet en værdi til CPRNumber fra UC1
-                            break;
+                           if (CPRNumber.Length == 10)
+                           {
+                              measureECGUI.startMaaling(CPRNumber); //Der skal være givet en værdi til CPRNumber fra UC1
+                           }
+                           else
+                           {
+                              Display.lcdClear();
+                              Display.lcdHome();
+                              Display.lcdPrint("Ugyldigt CPR");
+                              System.Threading.Thread.Sleep(3000);
+                              mainMenu();
+                           }
+                           break;
                         case 3:
                             visBatteristatusUI.visBatteristatus();
                             break;
-                    }//Måske det kunne være fedt med en sluk funktion. Den kunne placeres på hovedmenuknappen.
+                    }
                 }
 
             }
