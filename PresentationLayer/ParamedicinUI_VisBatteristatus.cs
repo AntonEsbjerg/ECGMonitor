@@ -70,7 +70,6 @@ namespace PresentationLayer
                 c++;
             }
             Display.lcdBlink();
-
             while(true)
             {
                 if (Encoder.isPressed())

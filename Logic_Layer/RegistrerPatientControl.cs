@@ -25,7 +25,6 @@ namespace LogicLayer
       }
       public string[] cardScan(string CPRNumber_)
       {
-
          //Parameter skulle have været "card"
          //Metode der skulle have scannet sygesikring
          //skal kalde validate, hvis true, så kald validated

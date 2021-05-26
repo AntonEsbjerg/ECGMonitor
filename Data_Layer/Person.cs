@@ -39,11 +39,11 @@ namespace DataLayer
                 }
                 else
                     result = 2;
-            }
-         
-         return result;
-
-      }
+         }
+            OpenConnectionST.Close();
+            return result;
+        }
+        
       public List<DTO_Patient> findData(string number)
       {
          List<DTO_Patient> patientObjekter = new List<DTO_Patient>();

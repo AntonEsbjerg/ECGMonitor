@@ -55,7 +55,7 @@ namespace DataLayer
                 command.Parameters.AddWithValue("@kommentar", nyMaaling._kommentar);
                 command.Parameters.AddWithValue("@ekgmaaleid", nyMaaling._ekgmaaleid);
                 command.Parameters.AddWithValue("@maalenehed_identifikation", nyMaaling._maaleenhed_identifikation);
-                //command.ExecuteNonQuery();
+                command.ExecuteNonQuery();
             }
             using (SqlCommand command = new SqlCommand(insertStringDLEDBMaeling, connect))
             {
@@ -71,10 +71,9 @@ namespace DataLayer
                 command.Parameters.AddWithValue("@borger_cprnr", nyMaaling._borger_cprnr);
                 command.Parameters.AddWithValue("@stemi_mistaenkt", nyMaaling._STEMI_suspected);
                 maalingID = (int)command.ExecuteScalar();
+                command.ExecuteNonQuery();
                 connect.Close();
-                return maalingID;
-                //command.ExecuteNonQuery();
-
+                return maalingID;             
             }
         }
         public int doctorAnalyses(string MaelingID)
