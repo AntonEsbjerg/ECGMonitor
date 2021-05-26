@@ -113,7 +113,7 @@ namespace PresentationLayer
                     break;
             }
          //Herefter skal lige tænkes over, hvor den så skal hen.
-         System.Threading.Thread.Sleep(20000);
+         System.Threading.Thread.Sleep(5000);
          Program.mainMenu();
         }
         public double[] startECG()

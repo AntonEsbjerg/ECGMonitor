@@ -65,7 +65,7 @@ namespace LogicLayer
                 {
                    belowRtak_Threshold = false;
                 }
-                if (Rtak != 0 && (double)ECGMaalinger_[i] > baseline + threshold_STsegment && belowRtak_Threshold == true && 0.07 < tidefterRtak && tidefterRtak < 0.17)
+                if (Rtak != 0 && (double)ECGMaalinger_[i] > baseline + threshold_STsegment && 0.07 < tidefterRtak && tidefterRtak < 0.17)
                 {
                    RPianalyseretSTEMI = true;
                    break;
