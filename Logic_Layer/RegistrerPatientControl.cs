@@ -64,6 +64,7 @@ namespace LogicLayer
       }
       public string[] patientValidated(string CPRNumber_)
       {
+         
          patientData = p.findData(CPRNumber_);
          string[] patienArr = new string[4];
          foreach (var data in patientData)

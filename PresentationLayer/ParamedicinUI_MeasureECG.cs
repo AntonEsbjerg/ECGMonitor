@@ -39,11 +39,13 @@ namespace PresentationLayer
         {
             byte c=0;
             byte d=0;
+            byte e = 0;
             bool udbryder = false;
             bool RPiAnalyse;
             int doctorAnalyse=0;
             Display.lcdClear();
             Display.lcdNoBlink();
+            Display.lcdBlink();
             string[] ECGMenu = new string[3] { "Meassure ECG", "Start Maaling", "Tilbage"};
             foreach (var item in ECGMenu) // ECGMenu bliver indlæst
             {
@@ -61,6 +63,7 @@ namespace PresentationLayer
                     {
                         c = Convert.ToByte(i+1);
                         Display.lcdGotoXY(0, c);
+                        Display.lcdBlink();
                     }                          
                 }
                 if (Encoder.isPressed())
@@ -99,11 +102,28 @@ namespace PresentationLayer
             //Nu skal ECG oploades i databasen
             maalingID=ECGControl.convertToBlobAndUpload(eCGControl.GetLokalinfo()); // metoden går igennem logiklaget, så reglerne overholdes.
             //Nu er målingen uploaded og vi afventer nu svar fra hospitalet om hvad diagnosen er
-            while(doctorAnalyse != 0 || doctorAnalyse != 1) //ved værdi 0 er der ikke svar endnu. Ellers er der svar
+            string[] ECGtjekLaegeSvar = new string[2] { "Maaling foretaget", "Tjek Laege svar" };
+            foreach (var item in ECGMenu)
             {
-                doctorAnalyse = ECGControl.confirmSTEMI(Convert.ToString(maalingID));
-                System.Threading.Thread.Sleep(5000);
+                Display.lcdGotoXY(0, e);
+                Display.lcdPrint(ECGMenu[e]);
+                e++;
             }
+            while(true)
+            {
+                if (Encoder.isPressed())
+                {
+                    doctorAnalyse = ECGControl.confirmSTEMI(Convert.ToString(maalingID));
+                }
+                if (doctorAnalyse == 0 || doctorAnalyse == 1)
+                    break;
+                
+            }
+            //while (doctorAnalyse != 0 || doctorAnalyse != 1) //ved værdi 0 er der ikke svar endnu. Ellers er der svar
+            //{
+            //    doctorAnalyse = ECGControl.confirmSTEMI(Convert.ToString(maalingID));
+            //    System.Threading.Thread.Sleep(5000);
+            //}
             switch(doctorAnalyse)
             {
                 case 1:
@@ -121,12 +141,16 @@ namespace PresentationLayer
         {
             double sample;
             tidspunktForMaaling = DateTime.Now;
+            ECGMaalinger = new double[500];
             eCGControl.GetLokalinfo()._start_tid = tidspunktForMaaling;
             eCGControl.GetLokalinfo()._dato = tidspunktForMaaling.Date;
-           // Array.Clear(ECGMaalinger, 0, ECGMaalinger.Length);
-            for (int i = 0; i < ECGMaalinger.Length; i++)
+            // Array.Clear(ECGMaalinger, 0, ECGMaalinger.Length);
+            if (ECGMaalinger.Length > 0)
             {
-                ECGMaalinger[i] = 0;
+                for (int i = 0; i < ECGMaalinger.Length; i++)
+                {
+                    ECGMaalinger[i] = 0;
+                }
             }
             for (int i = 0; i < 10 * 50; i++)
             {

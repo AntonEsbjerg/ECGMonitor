@@ -86,7 +86,7 @@ namespace LogicLayer
         }
         public int confirmSTEMI(string maalingID) //tjekker hele tiden efter om der er ændringer på den aktuelle plads i databasen
         {
-            int result = 0;
+            int result = 2;
             result=ecgData.doctorAnalyses(maalingID);
             //skal returnere true eller false alt efter hvad lægen har uploaded til database af analyse. 
             return result;
