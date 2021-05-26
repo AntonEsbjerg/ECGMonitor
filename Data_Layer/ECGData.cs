@@ -11,10 +11,13 @@ namespace DataLayer
     public class ECGData
     {
       private const string db = "LokalDatabase";
+      private DTO_Measurement lokalinfo;
+      
 
-      public ECGData()
+        public ECGData()
         {
-
+            
+            lokalinfo = new DTO_Measurement();
         }
         private SqlConnection connect
         {
@@ -28,8 +31,8 @@ namespace DataLayer
         }
         public DTO_Measurement lokalmaaling()
         {
-            DTO_Measurement lokalinfo;
-            lokalinfo = new DTO_Measurement();
+            //DTO_Measurement lokalinfo;
+            //lokalinfo = new DTO_Measurement();
             return lokalinfo;
         }
         public int uploadECG(DTO_Measurement nyMaaling)
@@ -45,22 +48,7 @@ namespace DataLayer
                 "sfp_maaltagermedarbjnr,sfp_mt_org,sfp_mt_kommentar,borger_fornavn,borger_efternavn,borger_cprnr,stemi_mistaenkt) " +
                 "VALUES (@dato,@antalmaalinger,@sfp_maaltagerfornavn, @sfp_maltagerefternavn,@sfp_maaltagermedarbjnr," +
                 "@sfp_mt_org,@sfp_mt_kommentar,@borger_fornavn,@borger_efternavn,@borger_cprnr,@stemi_mistaenkt)";
-            using (SqlCommand command = new SqlCommand(insertStringDLEDBData, connect))
-            {
-                tal = nyMaaling._lokalECG;
-                command.Parameters.AddWithValue("@raa_data", tal.SelectMany(value => BitConverter.GetBytes(value)).ToArray());
-                command.Parameters.AddWithValue("@samplerate_hz", nyMaaling._samplerate_hz);
-                command.Parameters.AddWithValue("@interval_sec", nyMaaling._interval_sec);
-                command.Parameters.AddWithValue("@interval_min", nyMaaling._interval_min);
-                command.Parameters.AddWithValue("@data_format", nyMaaling._dataformat);
-                command.Parameters.AddWithValue("@bin_eller_tekst", nyMaaling._bin_eller_tekst);
-                command.Parameters.AddWithValue("@maaleformat_type", nyMaaling._maaleformat_type);
-                command.Parameters.AddWithValue("@start_tid", nyMaaling._start_tid);
-                command.Parameters.AddWithValue("@kommentar", nyMaaling._kommentar);
-                command.Parameters.AddWithValue("@ekgmaaleid", nyMaaling._ekgmaaleid);
-                command.Parameters.AddWithValue("@maalenehed_identifikation", nyMaaling._maaleenhed_identifikation);
-                command.ExecuteNonQuery();
-            }
+            
             using (SqlCommand command = new SqlCommand(insertStringDLEDBMaeling, connect))
             {
                 command.Parameters.AddWithValue("@dato", nyMaaling._dato);
@@ -74,10 +62,27 @@ namespace DataLayer
                 command.Parameters.AddWithValue("@borger_efternavn", nyMaaling._borger_efternavn);
                 command.Parameters.AddWithValue("@borger_cprnr", nyMaaling._borger_cprnr);
                 command.Parameters.AddWithValue("@stemi_mistaenkt", nyMaaling._STEMI_suspected);
+                
+                command.ExecuteNonQuery();
                 maalingID = (int)command.ExecuteScalar();
+            }
+            using (SqlCommand command = new SqlCommand(insertStringDLEDBData, connect))
+            {
+                tal = nyMaaling._lokalECG;
+                command.Parameters.AddWithValue("@raa_data", tal.SelectMany(value => BitConverter.GetBytes(value)).ToArray());
+                command.Parameters.AddWithValue("@samplerate_hz", nyMaaling._samplerate_hz);
+                command.Parameters.AddWithValue("@interval_sec", nyMaaling._interval_sec);
+                command.Parameters.AddWithValue("@interval_min", nyMaaling._interval_min);
+                command.Parameters.AddWithValue("@data_format", nyMaaling._dataformat);
+                command.Parameters.AddWithValue("@bin_eller_tekst", nyMaaling._bin_eller_tekst);
+                command.Parameters.AddWithValue("@maaleformat_type", nyMaaling._maaleformat_type);
+                command.Parameters.AddWithValue("@start_tid", nyMaaling._start_tid);
+                command.Parameters.AddWithValue("@kommentar", nyMaaling._kommentar);
+                command.Parameters.AddWithValue("@ekgmaaleid", maalingID);
+                command.Parameters.AddWithValue("@maalenehed_identifikation", nyMaaling._maaleenhed_identifikation);
                 command.ExecuteNonQuery();
                 connect.Close();
-                return maalingID;             
+                return maalingID;
             }
         }
         public int doctorAnalyses(string MaelingID)

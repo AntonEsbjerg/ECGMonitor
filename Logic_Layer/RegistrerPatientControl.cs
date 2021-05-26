@@ -15,12 +15,15 @@ namespace LogicLayer
       private List<DTO_Patient> patientData;
       string[] ikkeRegistreretP = new string[2] { "Personnummer ikke", "genkendt" };
       Person p;
+        public DTO_Patient patient;
 
       public RegistrerPatientControl()
       {
+         
          cprR = new CPR_Register();
          p = new Person();
          patientData = new List<DTO_Patient>();
+
          // ved ikke helt, hvad der skal implementeres
       }
       public string[] cardScan(string CPRNumber_)
@@ -74,7 +77,8 @@ namespace LogicLayer
             patienArr[2] = data.Telfon_;
             patienArr[3] = data.Addresse_;
          }
-         return patienArr;
+         
+            return patienArr;
       }
    }
 

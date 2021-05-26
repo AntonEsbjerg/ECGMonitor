@@ -7,17 +7,21 @@ using System.Threading;
 using LogicLayer;
 using System.Data.SqlClient;
 using Microsoft.Data.SqlClient;
+using DTO;
 
 namespace PresentationLayer
 {
-    class ParamedicinUI_RegistrerPatient
+    public class ParamedicinUI_RegistrerPatient
     {
         static SerLCD Display;
         static TWIST Encoder;
         private RegistrerPatientControl RPcontrol;
-        private string CPRNumber1;
+        public string CPRNumber1 { get; set; }
         private string[] patientData;
+        public string BorgerFornavn { get; set; }
+        public string BorgerEfternavn { get; set; }
         MeasureECGControl eCGControl = new MeasureECGControl();
+
 
 
         public ParamedicinUI_RegistrerPatient()
@@ -74,6 +78,7 @@ namespace PresentationLayer
                             {
                                 patientData = RPcontrol.cardScan("0101010101"); // Det er kun patient, der har sygesikrin med;) 
                                 Program.CPRNumber = "0101010101"; // Ellers skulle en scanner få CPR fra sygesikring.
+                                CPRNumber1 = "0101010101";
                                 displayValidatedPatient(patientData);
                                 break;
                             }
@@ -93,6 +98,7 @@ namespace PresentationLayer
                             {
                                 patientData = RPcontrol.defaultPatient("9999990000");
                                 Program.CPRNumber = "9999990000";
+                                CPRNumber1 = "9999990000";
                                 displayValidatedPatient(patientData);
                                 break;
                             }
@@ -175,12 +181,12 @@ namespace PresentationLayer
                 }
 
             }
-            if (cprN.Length==10)
-            {
-               eCGControl.GetLokalinfo()._borger_cprnr = cprN;
-               eCGControl.GetLokalinfo()._borger_fornavn = patientData[1];
-               eCGControl.GetLokalinfo()._borger_efternavn = patientData[2];
-            }
+            //if (cprN.Length==10)
+            //{
+            //   eCGControl.GetLokalinfo()._borger_cprnr = cprN;
+            //   eCGControl.GetLokalinfo()._borger_fornavn = patientData[1];
+            //   eCGControl.GetLokalinfo()._borger_efternavn = patientData[2];
+            //}
 
             return cprN;
         }
@@ -194,7 +200,14 @@ namespace PresentationLayer
                 Display.lcdPrint(displayP[i]);
             }
 
-            while(true)
+            BorgerFornavn = displayP[1];
+            BorgerEfternavn = displayP[2];
+
+            //eCGControl.GetLokalinfo()._borger_cprnr = CPRNumber1;
+            //eCGControl.GetLokalinfo()._borger_fornavn = displayP[1];
+            //eCGControl.GetLokalinfo()._borger_efternavn = displayP[2];
+
+            while (true)
             {
                 if(Encoder.isPressed())
                 {

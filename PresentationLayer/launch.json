@@ -1,7 +1,7 @@
 {
   "version": "0.2.0",
   "adapter": "c:\\Program Files (x86)\\Putty\\plink.exe",
-  "adapterArgs": "pi@raspberrypi.local -pw raspberry -batch -T /usr/share/vsdbg/vsdbg --interpreter=vscode",
+  "adapterArgs": "pi@192.168.43.168 -pw raspberry -batch -T /usr/share/vsdbg/vsdbg --interpreter=vscode",
   "configurations": [
     {
       "name": ".NET Core Launch",

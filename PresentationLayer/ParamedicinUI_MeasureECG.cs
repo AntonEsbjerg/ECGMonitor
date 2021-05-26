@@ -13,7 +13,7 @@ using DTO;
 namespace PresentationLayer
 {
 
-    class ParamedicinUI_MeasureECG
+    public class ParamedicinUI_MeasureECG
     {
         MeasureECGControl eCGControl = new MeasureECGControl();
         static SerLCD Display;
@@ -26,6 +26,8 @@ namespace PresentationLayer
         public double[] ECGMaalinger { get; set; }
         private ADC1015 adc;
         private DTO_Measurement nyMaaling { get; set; }
+        private DTO_Patient patient;
+        private ParamedicinUI_RegistrerPatient paraRP;
 
         public ParamedicinUI_MeasureECG()
         {
@@ -33,6 +35,8 @@ namespace PresentationLayer
             ECGControl = new MeasureECGControl();
             Display = new SerLCD();
             Encoder = new TWIST();
+            paraRP = new ParamedicinUI_RegistrerPatient();
+            
 
         }
         public void startMaaling(string CPRNumber)
@@ -144,6 +148,23 @@ namespace PresentationLayer
             ECGMaalinger = new double[500];
             eCGControl.GetLokalinfo()._start_tid = tidspunktForMaaling;
             eCGControl.GetLokalinfo()._dato = tidspunktForMaaling.Date;
+            eCGControl.GetLokalinfo()._antalmaalinger = 500;
+            eCGControl.GetLokalinfo()._samplerate_hz = 50;
+            eCGControl.GetLokalinfo()._interval_sec = 10;
+            eCGControl.GetLokalinfo()._interval_min = 0;
+            eCGControl.GetLokalinfo()._dataformat = "double";
+            eCGControl.GetLokalinfo()._sfp_maaltagerefternavn = "Mortensen";
+            eCGControl.GetLokalinfo()._sfp_maaltagerfornavn = "Lars";
+            eCGControl.GetLokalinfo()._sfp_maaltagermedarbjdnr = "1";
+            eCGControl.GetLokalinfo()._sfp_mt_kommentar = "";
+            eCGControl.GetLokalinfo()._sfp_mt_org = "Aarhus Universitet";
+            eCGControl.GetLokalinfo()._maaleformat_type = "double";
+            eCGControl.GetLokalinfo()._bin_eller_tekst = "bin";
+            eCGControl.GetLokalinfo()._maaleenhed_identifikation = "RPi B3+";
+            eCGControl.GetLokalinfo()._borger_cprnr = paraRP.CPRNumber1;
+            eCGControl.GetLokalinfo()._borger_fornavn = paraRP.BorgerFornavn;
+            eCGControl.GetLokalinfo()._borger_efternavn = paraRP.BorgerEfternavn;
+
             // Array.Clear(ECGMaalinger, 0, ECGMaalinger.Length);
             if (ECGMaalinger.Length > 0)
             {
