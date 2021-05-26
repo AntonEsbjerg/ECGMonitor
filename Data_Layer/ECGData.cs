@@ -37,11 +37,11 @@ namespace DataLayer
             int maalingID;
             double[] tal;
             double[] ecgVoltage = new double[500];
-            string insertStringDLEDBData = "INSERT INTO EKGDATA (raa_data,samplerate_hz,interval_sec,interval_min,data_format," +
+            string insertStringDLEDBData = "INSERT INTO db_owner.EKGDATA (raa_data,samplerate_hz,interval_sec,interval_min,data_format," +
                 "bin_eller_tekst,maaleformat_type,start_tid,kommentar,ekgmaaleid,maalenehed_identifikation) " +
                 "VALUES (@raa_data, @samplerate_hz, @interval_sec, @interval_min, @data_format, @bin_eller_tekst, " +
                 "@maaleformat_type,@start_tid,@kommentar,@ekgmaaleid,@maalenehed_identifikation)";
-            string insertStringDLEDBMaeling = "INSERT INTO EKGMAELING (dato,antalmaalinger,sfp_maaltagerfornavn,sfp_maltagerefternavn," +
+            string insertStringDLEDBMaeling = "INSERT INTO db_owner.EKGMAELING (dato,antalmaalinger,sfp_maaltagerfornavn,sfp_maltagerefternavn," +
                 "sfp_maaltagermedarbjnr,sfp_mt_org,sfp_mt_kommentar,borger_fornavn,borger_efternavn,borger_cprnr,stemi_mistaenkt) " +
                 "VALUES (@dato,@antalmaalinger,@sfp_maaltagerfornavn, @sfp_maltagerefternavn,@sfp_maaltagermedarbjnr," +
                 "@sfp_mt_org,@sfp_mt_kommentar,@borger_fornavn,@borger_efternavn,@borger_cprnr,@stemi_mistaenkt)";
@@ -85,7 +85,7 @@ namespace DataLayer
             SqlDataReader rdr;
             int doctorAnalyseVaerdi = 2;
             //Her skal oprettes forbindelse til databasen, hvor der skal tjekkes om der er uplaoded et nyt svar fra lægen.
-            string insertStringParam1 = ("Select * from EKGMaeling where stemi_paavist IS NOT NULL and ekgmaaleid= " + MaelingID);
+            string insertStringParam1 = ("Select * from db_owner.EKGMaeling where stemi_paavist IS NOT NULL and ekgmaaleid= " + MaelingID);
             using (SqlCommand command = new SqlCommand(insertStringParam1, connect))
             {
                 rdr = command.ExecuteReader();

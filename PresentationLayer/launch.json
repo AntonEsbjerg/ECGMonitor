@@ -9,6 +9,7 @@
       "cwd": "~/Programs",
       "program": "PresentationLayer.dll", // Denne ændres til hvad I kalder jeres projekt
       "request": "launch"
+
     }
   ]
 }
