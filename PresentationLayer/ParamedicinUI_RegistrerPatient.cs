@@ -72,8 +72,8 @@ namespace PresentationLayer
                             }
                         case 1:
                             {
-                                patientData = RPcontrol.cardScan("9999990000");
-                                Program.CPRNumber = "9999990000";
+                                patientData = RPcontrol.cardScan("0101010101"); // Det er kun patient, der har sygesikrin med;) 
+                                Program.CPRNumber = "0101010101"; // Ellers skulle en scanner få CPR fra sygesikring.
                                 displayValidatedPatient(patientData);
                                 break;
                             }
@@ -91,8 +91,8 @@ namespace PresentationLayer
 
                         case 3:
                             {
-                                patientData = RPcontrol.defaultPatient("0101010101");
-                                Program.CPRNumber = "0101010101";
+                                patientData = RPcontrol.defaultPatient("9999990000");
+                                Program.CPRNumber = "9999990000";
                                 displayValidatedPatient(patientData);
                                 break;
                             }
@@ -120,7 +120,7 @@ namespace PresentationLayer
                 if (a < 0)
                     a = -a;
 
-                for (int i = a; i >= 0; i = i - 12)
+                for (int i = a; i >= 0; i = i - 13)
                 {
 
                     if (i < 10)
@@ -140,6 +140,12 @@ namespace PresentationLayer
                     {
                         Display.lcdGotoXY(0, 1);
                         Display.lcdPrint("Tilbage");
+                        l = Convert.ToByte(i);
+                    }
+                    if(i==12)
+                    {
+                        Display.lcdGotoXY(0, 1);
+                        Display.lcdPrint("Bekraeft");
                         l = Convert.ToByte(i);
                     }
                 }
@@ -162,7 +168,7 @@ namespace PresentationLayer
                 }
                 Display.lcdGotoXY(0, 2);
                 Display.lcdPrint(cprN);
-                if (cprN.Length == 10 && Encoder.isPressed())
+                if (cprN.Length == 10 && l ==12 && Encoder.isPressed())
                 {
                     break;
                 }
@@ -185,8 +191,13 @@ namespace PresentationLayer
 
             while(true)
             {
-
+                if(Encoder.isPressed())
+                {
+                    break;
+                }              
+                
             }
+            Program.mainMenu();
             //Patienten skal her vises på skærmen
             //Hvordan skal den ritige patient kunne vises på skærmen?
         }
