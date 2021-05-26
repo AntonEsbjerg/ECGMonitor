@@ -72,8 +72,8 @@ namespace PresentationLayer
                             }
                         case 1:
                             {
-                                patientData = RPcontrol.cardScan("9999990000");
-                                Program.CPRNumber = "9999990000";
+                                patientData = RPcontrol.cardScan("0101010101"); // Det er kun patient, der har sygesikrin med;) 
+                                Program.CPRNumber = "0101010101"; // Ellers skulle en scanner få CPR fra sygesikring.
                                 displayValidatedPatient(patientData);
                                 break;
                             }
@@ -115,12 +115,12 @@ namespace PresentationLayer
             while (true)
             {
                 Display.lcdGotoXY(0, 1);
-                Display.lcdPrint("       ");
+                Display.lcdPrint("        ");
                 int a = Encoder.getDiff(true);
                 if (a < 0)
                     a = -a;
 
-                for (int i = a; i >= 0; i = i - 12)
+                for (int i = a; i >= 0; i = i - 13)
                 {
 
                     if (i < 10)
@@ -142,6 +142,12 @@ namespace PresentationLayer
                         Display.lcdPrint("Tilbage");
                         l = Convert.ToByte(i);
                     }
+                    if(i==12)
+                    {
+                        Display.lcdGotoXY(0, 1);
+                        Display.lcdPrint("Bekraeft");
+                        l = Convert.ToByte(i);
+                    }
                 }
                 if (Encoder.isPressed() == true && l < 10)
                 {
@@ -153,24 +159,29 @@ namespace PresentationLayer
                 {
                     cprN = "";
                     Display.lcdGotoXY(0, 2);
-                    Display.lcdPrint("              ");
+                    Display.lcdPrint("               ");
                 }
                 if (Encoder.isPressed() == true && l == 11)
                 {
                     cprN = "";
+                    Program.mainMenu();
                     break;
                 }
                 Display.lcdGotoXY(0, 2);
                 Display.lcdPrint(cprN);
-                if (cprN.Length == 10 && Encoder.isPressed())
+                if (cprN.Length == 10 && l ==12 && Encoder.isPressed())
                 {
                     break;
                 }
 
             }
-            eCGControl.GetLokalinfo()._borger_cprnr = cprN;
-            eCGControl.GetLokalinfo()._borger_fornavn = patientData[1];
-            eCGControl.GetLokalinfo()._borger_efternavn = patientData[2];
+            if (cprN.Length==10)
+            {
+               eCGControl.GetLokalinfo()._borger_cprnr = cprN;
+               eCGControl.GetLokalinfo()._borger_fornavn = patientData[1];
+               eCGControl.GetLokalinfo()._borger_efternavn = patientData[2];
+            }
+
             return cprN;
         }
 
@@ -185,8 +196,13 @@ namespace PresentationLayer
 
             while(true)
             {
-
+                if(Encoder.isPressed())
+                {
+                    break;
+                }              
+                
             }
+            Program.mainMenu();
             //Patienten skal her vises på skærmen
             //Hvordan skal den ritige patient kunne vises på skærmen?
         }

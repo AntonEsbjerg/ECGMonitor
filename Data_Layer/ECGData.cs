@@ -9,7 +9,9 @@ namespace DataLayer
 {
     public class ECGData
     {
-        public ECGData()
+      private const string db = "LokalDatabase";
+
+      public ECGData()
         {
 
         }
@@ -17,8 +19,9 @@ namespace DataLayer
         {
             get
             {
-                var con = new SqlConnection(@"Data Source=st-i4dab.uni.au.dk;Initial Catalog=ST2PRJ2OffEKGDatabase;Integrated Security=False;User ID=ST2PRJ2OffEKGDatabase;Password=ST2PRJ2OffEKGDatabase;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False");
-                con.Open();
+            var con = new SqlConnection(@"Data Source=DESKTOP-PDTN5JP\SQLEXPRESS;Initial Catalog=" + db + ";User ID=" + db + ";Password=" + db + ";Connect Timeout=30;Encrypt=False;TrustServerCertificate=False");
+
+            con.Open();
                 return con;
             }
         }

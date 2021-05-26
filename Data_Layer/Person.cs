@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Data.SqlClient;
+//using System.Data.SqlClient;
 using DTO;
-//using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace DataLayer
 {
    public class Person
    {
-        public Person()
+      private const string db = "LokalDatabase";
+
+      public Person()
         {
 
         }
@@ -17,7 +19,7 @@ namespace DataLayer
       {
          get
          {
-            var con = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            var con = new SqlConnection(@"Data Source=DESKTOP-PDTN5JP\SQLEXPRESS;Initial Catalog=" + db + ";User ID=" + db + ";Password=" + db + ";Connect Timeout=30;Encrypt=False;TrustServerCertificate=False");
             con.Open();
             return con;
          }
@@ -32,16 +34,17 @@ namespace DataLayer
          using (SqlCommand cmd = new SqlCommand(selectString, OpenConnectionST))
          {
             rdr = cmd.ExecuteReader();
-         }
-         if (rdr.Read())
-         {
-            result = 1;
+                if (rdr.Read())
+                {
+                    result = 1;
 
-         }
-         else
-            result = 2;
-         return
-            result;
+                }
+                else
+                    result = 2;
+            }
+         
+         return result;
+
       }
       public List<DTO_Patient> findData(string number)
       {
