@@ -29,7 +29,7 @@ namespace DataLayer
          int result = 0;
 
          SqlDataReader rdr;
-         string selectString = "select * from CPR_register where CPRnr= '" + number + "'";
+         string selectString = "select * from db_owner.CPR_register where CPRnr= '" + number + "'";
 
          using (SqlCommand cmd = new SqlCommand(selectString, OpenConnectionST))
          {
@@ -50,7 +50,7 @@ namespace DataLayer
       {
          List<DTO_Patient> patientObjekter = new List<DTO_Patient>();
             SqlDataReader rdr;
-         string selectString = "select * from CPR_register where CPRnr= '" + number + "'";
+         string selectString = "select * from db_owner.CPR_register where CPRnr= '" + number + "'";
 
          using (SqlCommand cmd = new SqlCommand(selectString, OpenConnectionST))
          {
