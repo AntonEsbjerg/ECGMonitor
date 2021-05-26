@@ -34,6 +34,6 @@
 
   <Target Name="LinuxDeviceDeployment" AfterTargets="LinuxDeployment">
     <Message Importance="high" Text="Linux device deployment after VS Build of $(ProjectName)" />
-    <Exec Command="&quot;C:\Program Files (x86)\PuTTY&quot;\plink.exe -ssh pi@raspberrypi.local -pw raspberry -batch -T hostname&#xD;&#xA;&quot;C:\Program Files (x86)\PuTTY&quot;\pscp.exe -P 22   -pw raspberry   &quot;$(ProjectDir)bin&quot;\Debug\netcoreapp3.1\linux-arm\*.*   pi@raspberrypi.local:./Programs/&#xD;&#xA;" />
+    <Exec Command="&quot;C:\Program Files (x86)\PuTTY&quot;\plink.exe -ssh pi@192.168.43.168 -pw raspberry -batch -T hostname&#xD;&#xA;&quot;C:\Program Files (x86)\PuTTY&quot;\pscp.exe -P 22   -pw raspberry   &quot;$(ProjectDir)bin&quot;\Debug\netcoreapp3.1\linux-arm\*.*   pi@192.168.43.168:./Programs/&#xD;&#xA;" />
   </Target>
 </Project>

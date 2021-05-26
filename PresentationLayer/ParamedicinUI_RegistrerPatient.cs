@@ -91,8 +91,8 @@ namespace PresentationLayer
 
                         case 3:
                             {
-                                patientData = RPcontrol.defaultPatient("9999990000");
-                                Program.CPRNumber = "9999990000";
+                                patientData = RPcontrol.defaultPatient("0101010101");
+                                Program.CPRNumber = "0101010101";
                                 displayValidatedPatient(patientData);
                                 break;
                             }
