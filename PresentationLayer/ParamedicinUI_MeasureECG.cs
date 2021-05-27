@@ -93,7 +93,7 @@ namespace PresentationLayer
                     break;
             }
             
-            RPiAnalyse = ECGControl.analyzeECG(ECGMaalinger);
+            RPiAnalyse = ECGControl.analyzeECG(ECGMaalinger); // er bool returneres af analyse metoden, og den bestemmer udfaldet
             if(RPiAnalyse==true)
             {
                 informPossibleSTEMI();
@@ -105,7 +105,7 @@ namespace PresentationLayer
                 eCGControl.GetLokalinfo()._STEMI_suspected = false;
             }
             //Nu skal ECG oploades i databasen
-            maalingID=ECGControl.convertToBlobAndUpload(eCGControl.GetLokalinfo()); // metoden går igennem logiklaget, så reglerne overholdes.
+            maalingID=ECGControl.convertToBlobAndUpload(eCGControl.GetLokalinfo()); // metoden går igennem logiklaget, så 3lags-reglen overholdes.
             //Nu er målingen uploaded og vi afventer nu svar fra hospitalet om hvad diagnosen er
             string[] ECGtjekLaegeSvar = new string[2] { "Maaling foretaget", "Tjek Laege svar" };
             foreach (var item in ECGtjekLaegeSvar)
@@ -116,37 +116,35 @@ namespace PresentationLayer
             }
             while(true)
             {
+                //Vi venter i denne løkke indtil vi ved, at lægen har kigget efter et svar.
+                //Det er vigtigt at computeren er hoppet af cisco, så  det er muligt at tilgå den lokale database igen.
                 if (Encoder.isPressed())
                 {
                     doctorAnalyse = ECGControl.confirmSTEMI(Convert.ToString(maalingID));
                 }
                 if (doctorAnalyse == 0 || doctorAnalyse == 1)
-                    break;
-                
+                    break; // Vi går videre herfra, når svaret fra lægen er hentet korrekt.
             }
-            //while (doctorAnalyse != 0 || doctorAnalyse != 1) //ved værdi 0 er der ikke svar endnu. Ellers er der svar
-            //{
-            //    doctorAnalyse = ECGControl.confirmSTEMI(Convert.ToString(maalingID));
-            //    System.Threading.Thread.Sleep(5000);
-            //}
-            switch(doctorAnalyse)
+            
+            switch(doctorAnalyse) // Svaret fra lægen afgør hvilken skærm der vises
             {
                 case 1:
                     alarmSTEMI();
                     break;
-                case 2:
+                case 0:
                     noSTEMI();
                     break;
             }
-         //Herefter skal lige tænkes over, hvor den så skal hen.
-         System.Threading.Thread.Sleep(5000);
+         //Skærmen står i yderlig 3 sekunder inden vi vender tilbage til hovedmenu, hvor en ny måling kan foregå
+         System.Threading.Thread.Sleep(3000);
          Program.mainMenu();
         }
         public double[] startECG()
         {
             double sample;
             tidspunktForMaaling = DateTime.Now;
-            ECGMaalinger = new double[500];
+            ECGMaalinger = new double[500]; // der gemmes 500 målepunkter
+            //Nedenstående gemmes alle de statiske til, der kan sættes til databasen.
             eCGControl.GetLokalinfo()._start_tid = tidspunktForMaaling;
             eCGControl.GetLokalinfo()._dato = tidspunktForMaaling.Date;
             eCGControl.GetLokalinfo()._antalmaalinger = 500;
@@ -162,49 +160,46 @@ namespace PresentationLayer
             eCGControl.GetLokalinfo()._maaleformat_type = "double";
             eCGControl.GetLokalinfo()._bin_eller_tekst = "1";
             eCGControl.GetLokalinfo()._maaleenhed_identifikation = "RPi B3+";
+            // Den pågældende patients data sættes klar, så det kan komme i database i datalaget.
             eCGControl.GetLokalinfo()._borger_cprnr = Program.CPRNumber;
             eCGControl.GetLokalinfo()._borger_fornavn = Program.BorgerFornavn;
             eCGControl.GetLokalinfo()._borger_efternavn = Program.BorgerEfternavn;
             eCGControl.GetLokalinfo()._kommentar = "";
             
-
-            // Array.Clear(ECGMaalinger, 0, ECGMaalinger.Length);
-            if (ECGMaalinger.Length > 0)
+            if (ECGMaalinger.Length > 0) //Hvis der ligger noget, så ryddes array.
             {
                 for (int i = 0; i < ECGMaalinger.Length; i++)
                 {
                     ECGMaalinger[i] = 0;
                 }
             }
-            for (int i = 0; i < 10 * 50; i++)
+            for (int i = 0; i < 10 * 50; i++) // vi kører igennem 500 gange
             {
                 //opsamler datapunkter og konvertere fra heltal i 11 bit format til volt:
-                sample = (adc.readADC_SingleEnded(0) / 2048.0) * 6.144;
-                //System.Diagnostics.Debug.WriteLine("input fra adc:    :  " + sample);
+                sample = (adc.readADC_SingleEnded(0) / 2048.0) * 6.144;                
 
                 //tilføjer målepunkterne til listen af grafpunker:
-                ECGMaalinger[i] = sample;
-                //EKGLine.Values.Add(sample);
+                ECGMaalinger[i] = sample;                
 
                 //mellem hver måling skal man pause en lille smule for at holde styr på hvor mange
                 //gange vi sampler pr. sek                
                 System.Threading.Thread.Sleep((1000 / 50) - 4);
             }
-            eCGControl.GetLokalinfo()._lokalECG = ECGMaalinger;
-            return ECGMaalinger;
+            eCGControl.GetLokalinfo()._lokalECG = ECGMaalinger; // Værdierne sættes klar til databasen
+            return ECGMaalinger; //Metoden returnerer et array på 500 målinger
         }
         public void alarmSTEMI()
         {
             Display.lcdClear();
             byte d = 0;
-            string[] alarmSTEMI = new string[4] { "ECG-Analyseret", "Tegn på STEMI", "Nærmeste PCI-Center", "Vej 1, 8200" };
+            string[] alarmSTEMI = new string[4] { "ECG-Analyseret", "Tegn paa STEMI", "Naermeste PCI-Center", "AkutVej 1, 8200"};
             foreach (var item in alarmSTEMI) // AlarmsSTEMi bliver indlæst
             {
                 Display.lcdGotoXY(0, d);
                 Display.lcdPrint(alarmSTEMI[d]);
                 d++;
             }
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++) // den blinker rød et par gange.
             {
                 Display.lcdSetBackLight(255, 0, 0);
                 System.Threading.Thread.Sleep(250);
@@ -214,7 +209,7 @@ namespace PresentationLayer
             while(true)
             {
                 if (Encoder.isPressed())
-                    break;
+                    break; //Ved tryk har ambulanceredderen læst diagnosen, og bekræfter herved
             }
         }
 
@@ -232,18 +227,18 @@ namespace PresentationLayer
             while (true)
             {
                 if (Encoder.isPressed())
-                    break;
+                    break; //Ved tryk har ambulanceredderen læst diagnosen, og bekræfter herved
             }
         }
         public void blinkGreen()
         {
-            Display.lcdSetBackLight(0, 255, 0);
+            Display.lcdSetBackLight(0, 255, 0); // Lettere hver gang, der skal kaldes en grøn skærm.
         }
         public void informPossibleNoSTEMI()
         {
             Display.lcdClear();
             byte d = 0;
-            string[] noSTEMI = new string[3] { "Ingen STEMI fundet", "afvent svar fra", "sygehus" };
+            string[] noSTEMI = new string[3] { "Ingen STEMI fundet", "Afvent svar fra", "sygehus" };
             foreach (var item in noSTEMI) // noSTEMi bliver indlæst
             {
                 Display.lcdGotoXY(0, d);
@@ -253,7 +248,7 @@ namespace PresentationLayer
             while (true)
             {
                 if (Encoder.isPressed())
-                    break;
+                    break; //Bryder ud ved tryk
             }
         }
         public void informPossibleSTEMI()
