@@ -81,8 +81,14 @@ namespace LogicLayer
         public int convertToBlobAndUpload(DTO_Measurement nyMaaling)
         {
             //Konvertering sker direkte i datalag
-            //nyMaaling._STEMI_suspected=analyzeECG(nyMaaling._lokalECG);
-            maalingID= ecgData.uploadECG(nyMaaling);
+            //nyMaaling._STEMI_suspected=analyzeECG(nyMaaling._lokalECG)
+            double[] tal;
+            tal = nyMaaling._lokalECG;
+            for (int i = 0; i < tal.Length; i++)
+            {
+                tal[i] = Math.Round(tal[i], 4)-1.5;
+            }
+            maalingID = ecgData.uploadECG(nyMaaling);
             return maalingID;
         }
         public int confirmSTEMI(string maalingID) //tjekker hele tiden efter om der er ændringer på den aktuelle plads i databasen
