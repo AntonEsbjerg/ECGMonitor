@@ -84,11 +84,11 @@ namespace LogicLayer
             //Konvertering sker direkte i datalag
             //nyMaaling._STEMI_suspected=analyzeECG(nyMaaling._lokalECG)
             double[] tal;
-            
-            for (int i = 0; i < nyMaaling._lokalECG.Length; i++)
+            foreach (var i in nyMaaling._lokalECG)
             {
-                nyMaaling._lokalECG[i] = Math.Round(nyMaaling._lokalECG[i], 4)-Baseline;
+                nyMaaling._lokalECG[i] = nyMaaling._lokalECG[i] + Baseline;
             }
+            
             maalingID = ecgData.uploadECG(nyMaaling);
             return maalingID;
         }

@@ -70,7 +70,10 @@ namespace DataLayer
             }
             using (SqlCommand command = new SqlCommand(insertStringDLEDBData, connect))
             {
-               
+                for (int i = 0; i < nyMaaling._lokalECG.Length; i++)
+                {
+                    nyMaaling._lokalECG[i] = Math.Round(nyMaaling._lokalECG[i], 4);
+                }
                 command.Parameters.AddWithValue("@raa_data", nyMaaling._lokalECG.SelectMany(value => BitConverter.GetBytes(value)).ToArray());
                 command.Parameters.AddWithValue("@samplerate_hz", nyMaaling._samplerate_hz);
                 command.Parameters.AddWithValue("@interval_sec", nyMaaling._interval_sec);
