@@ -92,8 +92,7 @@ namespace LogicLayer
         {
             //Konvertering sker direkte i datalag
             //nyMaaling._STEMI_suspected=analyzeECG(nyMaaling._lokalECG)
-            double[] tal;
-                     
+            
             maalingID = ecgData.uploadECG(nyMaaling);
             return maalingID;
         }
