@@ -65,11 +65,16 @@ namespace DataLayer
 
                 //command.ExecuteNonQuery();
                 //nyMaaling._ekgmaaleid = (int)command.ExecuteScalar();
-                maalingID = Convert.ToInt32(command.ExecuteScalar());
+                //maalingID = Convert.ToInt32(command.ExecuteScalar());
+                nyMaaling._ekgmaaleid = Convert.ToInt32(command.ExecuteScalar());
             }
             using (SqlCommand command = new SqlCommand(insertStringDLEDBData, connect))
             {
                 tal = nyMaaling._lokalECG;
+                for(int i=0; i<tal.Length; i++)
+                {
+                    tal[i] = Math.Round(tal[i], 4);
+                }
                 command.Parameters.AddWithValue("@raa_data", tal.SelectMany(value => BitConverter.GetBytes(value)).ToArray());
                 command.Parameters.AddWithValue("@samplerate_hz", nyMaaling._samplerate_hz);
                 command.Parameters.AddWithValue("@interval_sec", nyMaaling._interval_sec);
@@ -81,7 +86,8 @@ namespace DataLayer
                 command.Parameters.AddWithValue("@kommentar", nyMaaling._kommentar);
                 command.Parameters.AddWithValue("@ekgmaaleid", nyMaaling._ekgmaaleid);
                 command.Parameters.AddWithValue("@maalenehed_identifikation", nyMaaling._maaleenhed_identifikation);
-                command.ExecuteNonQuery();
+                command.ExecuteScalar();
+                //command.ExecuteNonQuery();
                 connect.Close();
                 return nyMaaling._ekgmaaleid;
             }

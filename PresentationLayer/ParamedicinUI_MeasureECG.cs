@@ -47,7 +47,7 @@ namespace PresentationLayer
             byte e = 0;
             bool udbryder = false;
             bool RPiAnalyse;
-            int doctorAnalyse=0;
+            int doctorAnalyse=2; // så der ikke er svar før lægen har indrapporteret det
             Display.lcdClear();
             Display.lcdNoBlink();
             Display.lcdBlink();
@@ -108,10 +108,10 @@ namespace PresentationLayer
             maalingID=ECGControl.convertToBlobAndUpload(eCGControl.GetLokalinfo()); // metoden går igennem logiklaget, så reglerne overholdes.
             //Nu er målingen uploaded og vi afventer nu svar fra hospitalet om hvad diagnosen er
             string[] ECGtjekLaegeSvar = new string[2] { "Maaling foretaget", "Tjek Laege svar" };
-            foreach (var item in ECGMenu)
+            foreach (var item in ECGtjekLaegeSvar)
             {
                 Display.lcdGotoXY(0, e);
-                Display.lcdPrint(ECGMenu[e]);
+                Display.lcdPrint(ECGtjekLaegeSvar[e]);
                 e++;
             }
             while(true)
@@ -160,7 +160,7 @@ namespace PresentationLayer
             eCGControl.GetLokalinfo()._sfp_mt_kommentar = "";
             eCGControl.GetLokalinfo()._sfp_mt_org = "Aarhus Universitet";
             eCGControl.GetLokalinfo()._maaleformat_type = "double";
-            eCGControl.GetLokalinfo()._bin_eller_tekst = "bin";
+            eCGControl.GetLokalinfo()._bin_eller_tekst = "1";
             eCGControl.GetLokalinfo()._maaleenhed_identifikation = "RPi B3+";
             eCGControl.GetLokalinfo()._borger_cprnr = Program.CPRNumber;
             eCGControl.GetLokalinfo()._borger_fornavn = Program.BorgerFornavn;
