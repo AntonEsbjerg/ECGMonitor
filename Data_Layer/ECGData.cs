@@ -71,7 +71,7 @@ namespace DataLayer
             using (SqlCommand command = new SqlCommand(insertStringDLEDBData, connect))
             {
                
-                command.Parameters.AddWithValue("@raa_data", tal.SelectMany(value => BitConverter.GetBytes(value)).ToArray());
+                command.Parameters.AddWithValue("@raa_data", nyMaaling._lokalECG.SelectMany(value => BitConverter.GetBytes(value)).ToArray());
                 command.Parameters.AddWithValue("@samplerate_hz", nyMaaling._samplerate_hz);
                 command.Parameters.AddWithValue("@interval_sec", nyMaaling._interval_sec);
                 command.Parameters.AddWithValue("@interval_min", nyMaaling._interval_min);
