@@ -80,32 +80,31 @@ namespace PresentationLayer
                     switch (b) // de 4 menuer 
                     {
                         case 0:
-                           Display.lcdClear(); // skærmen slettes, lyset slukkes, cursor stoppes, og programmet afsluttes.
+                           Display.lcdClear();
                            Display.lcdSetBackLight(0, 0, 0);
                            Display.lcdNoBlink();
+                           //Display.lcdNoDisplay();
                            Environment.Exit(0);
                            break;
                         case 1:
                             registrerPatientUI.registrerPatientMenu();
                             break;
                         case 2:
-                           if (CPRNumber.Length == 10) // sikrer, at CPR er 10 tegn
+                           if (CPRNumber.Length == 10)
                            {
                               measureECGUI.startMaaling(CPRNumber); //Der skal være givet en værdi til CPRNumber fra UC1
                            }
-                           else //Hvis der er er CPR nummer - vender man bare reur til hoved menu
+                           else
                            {
                               Display.lcdClear();
                               Display.lcdHome();
                               Display.lcdPrint("Ugyldigt CPR");
-                              Display.lcdGotoXY(0, 1);
-                              Display.lcdPrint("Vaelg 'indtast CPR-Nr'");
                               System.Threading.Thread.Sleep(3000);
                               mainMenu();
                            }
                            break;
                         case 3:
-                            visBatteristatusUI.visBatteristatus(); // henter batteristatus
+                            visBatteristatusUI.visBatteristatus();
                             break;
                     }
                 }
