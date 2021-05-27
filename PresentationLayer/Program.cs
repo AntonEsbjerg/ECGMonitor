@@ -18,7 +18,10 @@ namespace PresentationLayer
         private static ParamedicinUI_MeasureECG measureECGUI;
         private static ParamedicinUI_VisBatteristatus visBatteristatusUI; 
         public static string CPRNumber { get; set; }
-        
+        public static string CPRNumber1 { get; set; }
+        public static string BorgerFornavn { get; set; }
+        public static string BorgerEfternavn { get; set; }
+
         static void Main(string[] args)
         {
             MeasureECGControl eCGControl = new MeasureECGControl();

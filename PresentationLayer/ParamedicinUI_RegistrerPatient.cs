@@ -16,11 +16,11 @@ namespace PresentationLayer
         static SerLCD Display;
         static TWIST Encoder;
         private RegistrerPatientControl RPcontrol;
-        public string CPRNumber1 { get; set; }
+        //public string CPRNumber1 { get; set; }
         private string[] patientData;
-        public string BorgerFornavn { get; set; }
-        public string BorgerEfternavn { get; set; }
-        MeasureECGControl eCGControl = new MeasureECGControl();
+        //public string BorgerFornavn { get; set; }
+        //public string BorgerEfternavn { get; set; }
+        //MeasureECGControl eCGControl = new MeasureECGControl();
 
 
 
@@ -78,7 +78,7 @@ namespace PresentationLayer
                             {
                                 patientData = RPcontrol.cardScan("0101010101"); // Det er kun patient, der har sygesikrin med;) 
                                 Program.CPRNumber = "0101010101"; // Ellers skulle en scanner få CPR fra sygesikring.
-                                CPRNumber1 = "0101010101";
+                                //CPRNumber1 = "0101010101";
                                 displayValidatedPatient(patientData);
                                 break;
                             }
@@ -87,9 +87,9 @@ namespace PresentationLayer
                             {
                                 //Her skal indtastning af CPR_nummer ske
                                 Program.CPRNumber = indtatstCPR();
-                                CPRNumber1 = Program.CPRNumber;
+                                //CPRNumber1 = Program.CPRNumber;
                                 //CPRNumber1 = indtatstCPR();
-                                patientData = RPcontrol.registrerPatient(CPRNumber1);
+                                patientData = RPcontrol.registrerPatient(Program.CPRNumber);
                                 displayValidatedPatient(patientData);
                                 break;
                             }
@@ -98,7 +98,7 @@ namespace PresentationLayer
                             {
                                 patientData = RPcontrol.defaultPatient("9999990000");
                                 Program.CPRNumber = "9999990000";
-                                CPRNumber1 = "9999990000";
+                                //CPRNumber1 = "9999990000";
                                 displayValidatedPatient(patientData);
                                 break;
                             }
@@ -199,9 +199,13 @@ namespace PresentationLayer
                 Display.lcdGotoXY(0, i);
                 Display.lcdPrint(displayP[i]);
             }
+            string[] forOgEfternavn = patientData[1].Split(' ');
+            Program.BorgerFornavn = forOgEfternavn[0];
+            Program.BorgerEfternavn = forOgEfternavn[1];
+            Program.CPRNumber = patientData[0];
 
-            BorgerFornavn = displayP[1];
-            BorgerEfternavn = displayP[2];
+            //BorgerFornavn = displayP[1];
+            //BorgerEfternavn = displayP[2];
 
             //eCGControl.GetLokalinfo()._borger_cprnr = CPRNumber1;
             //eCGControl.GetLokalinfo()._borger_fornavn = displayP[1];

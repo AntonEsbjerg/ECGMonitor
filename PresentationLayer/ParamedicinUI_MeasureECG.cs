@@ -36,6 +36,7 @@ namespace PresentationLayer
             Display = new SerLCD();
             Encoder = new TWIST();
             paraRP = new ParamedicinUI_RegistrerPatient();
+            maalingID = new int();
             
 
         }
@@ -161,9 +162,11 @@ namespace PresentationLayer
             eCGControl.GetLokalinfo()._maaleformat_type = "double";
             eCGControl.GetLokalinfo()._bin_eller_tekst = "bin";
             eCGControl.GetLokalinfo()._maaleenhed_identifikation = "RPi B3+";
-            eCGControl.GetLokalinfo()._borger_cprnr = paraRP.CPRNumber1;
-            eCGControl.GetLokalinfo()._borger_fornavn = paraRP.BorgerFornavn;
-            eCGControl.GetLokalinfo()._borger_efternavn = paraRP.BorgerEfternavn;
+            eCGControl.GetLokalinfo()._borger_cprnr = Program.CPRNumber;
+            eCGControl.GetLokalinfo()._borger_fornavn = Program.BorgerFornavn;
+            eCGControl.GetLokalinfo()._borger_efternavn = Program.BorgerEfternavn;
+            eCGControl.GetLokalinfo()._kommentar = "";
+            
 
             // Array.Clear(ECGMaalinger, 0, ECGMaalinger.Length);
             if (ECGMaalinger.Length > 0)

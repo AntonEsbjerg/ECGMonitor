@@ -19,6 +19,7 @@ namespace LogicLayer
         public MeasureECGControl()
         {
             ecgData = new ECGData();
+            maalingID = new int();
         }
         public void startECG()
         {
