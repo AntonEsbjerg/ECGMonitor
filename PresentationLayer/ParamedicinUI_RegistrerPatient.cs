@@ -15,18 +15,12 @@ namespace PresentationLayer
     {
         static SerLCD Display;
         static TWIST Encoder;
-        private RegistrerPatientControl RPcontrol;
-        //public string CPRNumber1 { get; set; }
+        private RegistrerPatientControl RPcontrol;        
         private string[] patientData;
-        //public string BorgerFornavn { get; set; }
-        //public string BorgerEfternavn { get; set; }
-        //MeasureECGControl eCGControl = new MeasureECGControl();
-
-
 
         public ParamedicinUI_RegistrerPatient()
         {
-            patientData = new string[4];
+            patientData = new string[4]; // Patientens data hentet fra CPR-register
             Display = new SerLCD();
             Encoder = new TWIST();
             RPcontrol = new RegistrerPatientControl();
@@ -49,12 +43,11 @@ namespace PresentationLayer
             }
 
             Display.lcdHome(); // curserblink sættes til 0,0
-
             while (true)
             { 
                 int a = Encoder.getDiff(true);
                 if (a < 0)
-                    a = -a;
+                    a = -a; // modvirker crash ved negativ værdi fra getDiff
                 
                 for (int i = a; i >= 0; i = i - 4) // samme metode som main
                 {
@@ -67,7 +60,7 @@ namespace PresentationLayer
 
                 if (Encoder.isPressed() == true)
                 {
-                    switch (m)
+                    switch (m) // De fire valgmuligheder fra Register patient
                     {
                         case 0:
                             {
@@ -77,28 +70,22 @@ namespace PresentationLayer
                         case 1:
                             {
                                 patientData = RPcontrol.cardScan("0101010101"); // Det er kun patient, der har sygesikrin med;) 
-                                Program.CPRNumber = "0101010101"; // Ellers skulle en scanner få CPR fra sygesikring.
-                                //CPRNumber1 = "0101010101";
+                                Program.CPRNumber = "0101010101"; // Ellers skulle en scanner få CPR fra sygesikring.                               
                                 displayValidatedPatient(patientData);
                                 break;
                             }
-
                         case 2:
                             {
                                 //Her skal indtastning af CPR_nummer ske
                                 Program.CPRNumber = indtatstCPR();
-                                //CPRNumber1 = Program.CPRNumber;
-                                //CPRNumber1 = indtatstCPR();
                                 patientData = RPcontrol.registrerPatient(Program.CPRNumber);
                                 displayValidatedPatient(patientData);
                                 break;
                             }
-
                         case 3:
                             {
                                 patientData = RPcontrol.defaultPatient("9999990000");
-                                Program.CPRNumber = "9999990000";
-                                //CPRNumber1 = "9999990000";
+                                Program.CPRNumber = "9999990000";                                
                                 displayValidatedPatient(patientData);
                                 break;
                             }
@@ -126,10 +113,9 @@ namespace PresentationLayer
                 if (a < 0)
                     a = -a;
 
-                for (int i = a; i >= 0; i = i - 13)
+                for (int i = a; i >= 0; i = i - 13) // Der er 13 valgmuligheder ved indtast af CPR, 0-9, Clear, Tilbage og Bekraeft
                 {
-
-                    if (i < 10)
+                    if (i < 10) // ciffer indtastning
                     {
                         l = Convert.ToByte(i);
                         Display.lcdGotoXY(0, 1);
@@ -155,44 +141,38 @@ namespace PresentationLayer
                         l = Convert.ToByte(i);
                     }
                 }
-                if (Encoder.isPressed() == true && l < 10)
+                if (Encoder.isPressed() == true && l < 10) // tilføjer valgte ciffer til CPR-string
                 {
                     cprN += tal;
                     Display.lcdGotoXY(0, 2);
                     Display.lcdPrint(cprN);
                 }
-                if (Encoder.isPressed() == true && l == 10)
+                if (Encoder.isPressed() == true && l == 10) // CPR-ryddes
                 {
                     cprN = "";
                     Display.lcdGotoXY(0, 2);
                     Display.lcdPrint("               ");
                 }
-                if (Encoder.isPressed() == true && l == 11)
+                if (Encoder.isPressed() == true && l == 11) // CPR-ryddes og der vendes retur til hovedmenu
                 {
                     cprN = "";
                     Program.mainMenu();
                     break;
                 }
                 Display.lcdGotoXY(0, 2);
-                Display.lcdPrint(cprN);
-                if (cprN.Length == 10 && l ==12 && Encoder.isPressed())
+                Display.lcdPrint(cprN); // Det foreløbelige cprN vises på display
+                if (cprN.Length == 10 && l ==12 && Encoder.isPressed()) // Ved tryk på bekraeft og cprN.lenght =10 gemmes cprN, og der brydes ud.
                 {
                     break;
                 }
 
-            }
-            //if (cprN.Length==10)
-            //{
-            //   eCGControl.GetLokalinfo()._borger_cprnr = cprN;
-            //   eCGControl.GetLokalinfo()._borger_fornavn = patientData[1];
-            //   eCGControl.GetLokalinfo()._borger_efternavn = patientData[2];
-            //}
-
-            return cprN;
+            }           
+            return cprN; // Metoden sendes retur til hovedmenu
         }
 
         public void displayValidatedPatient(string[] displayP)
         {
+            //Patient data udskrives, og gemmes så det kan komme i databasen.
             Display.lcdClear();
             for (byte i = 0; i < displayP.Length; i++)
             {
@@ -204,24 +184,15 @@ namespace PresentationLayer
             Program.BorgerEfternavn = forOgEfternavn[1];
             Program.CPRNumber = patientData[0];
 
-            //BorgerFornavn = displayP[1];
-            //BorgerEfternavn = displayP[2];
-
-            //eCGControl.GetLokalinfo()._borger_cprnr = CPRNumber1;
-            //eCGControl.GetLokalinfo()._borger_fornavn = displayP[1];
-            //eCGControl.GetLokalinfo()._borger_efternavn = displayP[2];
-
             while (true)
             {
-                if(Encoder.isPressed())
+                if(Encoder.isPressed()) // afventer tryk før returnering til hovedmenu
                 {
                     break;
                 }              
                 
             }
-            Program.mainMenu();
-            //Patienten skal her vises på skærmen
-            //Hvordan skal den ritige patient kunne vises på skærmen?
+            Program.mainMenu();            
         }
     }
 }

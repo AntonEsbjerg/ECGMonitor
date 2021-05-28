@@ -17,16 +17,13 @@ namespace PresentationLayer
     {
         MeasureECGControl eCGControl = new MeasureECGControl();
         static SerLCD Display;
-        static TWIST Encoder;
-        private string CPRNumber;
+        static TWIST Encoder;        
         private int maalingID;
         private MeasureECGControl ECGControl;
-        private DateTime tidspunktForMaaling;
-        private DateTime dato;
+        private DateTime tidspunktForMaaling;        
         public double[] ECGMaalinger { get; set; }
         private ADC1015 adc;
-        private DTO_Measurement nyMaaling { get; set; }
-        private DTO_Patient patient;
+        private DTO_Measurement nyMaaling { get; set; }        
         private ParamedicinUI_RegistrerPatient paraRP;
 
         public ParamedicinUI_MeasureECG()
@@ -37,10 +34,8 @@ namespace PresentationLayer
             Encoder = new TWIST();
             paraRP = new ParamedicinUI_RegistrerPatient();
             maalingID = new int();
-            
-
         }
-        public void startMaaling(string CPRNumber)
+        public void startMaaling(string CPRNumber) //Modtager CPRN fra hovedmenu, når UC1 er gennemført
         {
             byte c=0;
             byte d=0;
@@ -49,8 +44,6 @@ namespace PresentationLayer
             bool RPiAnalyse;
             int doctorAnalyse=2; // så der ikke er svar før lægen har indrapporteret det
             Display.lcdClear();
-            Display.lcdNoBlink();
-            Display.lcdBlink();
             string[] ECGMenu = new string[3] { "Meassure ECG", "Start Maaling", "Tilbage"};
             foreach (var item in ECGMenu) // ECGMenu bliver indlæst
             {
@@ -58,10 +51,11 @@ namespace PresentationLayer
                 Display.lcdPrint(ECGMenu[d]);
                 d++;                
             }
-
             while (true)
             {
                 int a = Encoder.getDiff(true);
+                if (a < 0)
+                    a = -a;
                 for (int i = a; i >= 0; i = i - 2)
                 {
                     if (i < 2)
@@ -75,16 +69,15 @@ namespace PresentationLayer
                 {
                     switch (c)
                     {
-                        case 1:
+                        case 1: //starter hele maalingen. Ikke muligt at vende retur efter
                             {
                                 informECGStart();
-                                startECG();
-                                //ECGControl.startECG(); kan ikke oprettes i control, da den ikke kan bruge rpi osv
+                                startECG();                                
                                 informECGEnd();
                                 udbryder = true;
                                 break;
                             }
-                        case 2:
+                        case 2: // Vender retur ved fortrydelse
                             Program.mainMenu();
                             break;
                     }
@@ -93,7 +86,7 @@ namespace PresentationLayer
                     break;
             }
             
-            RPiAnalyse = ECGControl.analyzeECG(ECGMaalinger);
+            RPiAnalyse = ECGControl.analyzeECG(ECGMaalinger); // Systemet analyserer ECG, og giver informationen til DTO-objektet
             if(RPiAnalyse==true)
             {
                 informPossibleSTEMI();
@@ -117,19 +110,16 @@ namespace PresentationLayer
             }
             while(true)
             {
-                if (Encoder.isPressed())
+                if (Encoder.isPressed()) //Ved tryk forsøger systemet at hente svaret fra lægen i den loakle database. 
                 {
                     doctorAnalyse = ECGControl.confirmSTEMI(Convert.ToString(maalingID));
                 }
                 if (doctorAnalyse == 0 || doctorAnalyse == 1)
                     break;
-                
+
+               //afventer svar
             }
-            //while (doctorAnalyse != 0 || doctorAnalyse != 1) //ved værdi 0 er der ikke svar endnu. Ellers er der svar
-            //{
-            //    doctorAnalyse = ECGControl.confirmSTEMI(Convert.ToString(maalingID));
-            //    System.Threading.Thread.Sleep(5000);
-            //}
+            
             switch(doctorAnalyse)
             {
                 case 1:

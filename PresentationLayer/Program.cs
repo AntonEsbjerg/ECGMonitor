@@ -20,14 +20,14 @@ namespace PresentationLayer
         public static string CPRNumber { get; set; }
         public static string CPRNumber1 { get; set; }
         public static string BorgerFornavn { get; set; }
-        public static string BorgerEfternavn { get; set; }
+        public static string BorgerEfternavn { get; set; } //Properties, der bruges ved upload til database og maaling
 
         static void Main(string[] args)
         {
             MeasureECGControl eCGControl = new MeasureECGControl();
             Display = new SerLCD();
             Encoder = new TWIST();
-            CPRNumber = "";
+            CPRNumber = ""; // CPR-nummer sættes til 0
             registrerPatientUI = new ParamedicinUI_RegistrerPatient();
             measureECGUI = new ParamedicinUI_MeasureECG();
             visBatteristatusUI = new ParamedicinUI_VisBatteristatus();
@@ -84,10 +84,10 @@ namespace PresentationLayer
                            Display.lcdSetBackLight(0, 0, 0);
                            Display.lcdNoBlink();
                            //Display.lcdNoDisplay();
-                           Environment.Exit(0);
+                           Environment.Exit(0); // her er det muligt at slukke systemet
                            break;
                         case 1:
-                            registrerPatientUI.registrerPatientMenu();
+                            registrerPatientUI.registrerPatientMenu(); // vælger registrer patient
                             break;
                         case 2:
                            if (CPRNumber.Length == 10)
@@ -100,11 +100,11 @@ namespace PresentationLayer
                               Display.lcdHome();
                               Display.lcdPrint("Ugyldigt CPR");
                               System.Threading.Thread.Sleep(3000);
-                              mainMenu();
+                              mainMenu(); // Der vendes tilbage til hovedmenu, hvis CPR nummer ikke godkendes. 
                            }
                            break;
                         case 3:
-                            visBatteristatusUI.visBatteristatus();
+                            visBatteristatusUI.visBatteristatus(); // batteristatus metode
                             break;
                     }
                 }
