@@ -117,12 +117,7 @@ namespace PresentationLayer
                 if (doctorAnalyse == 0 || doctorAnalyse == 1)
                     break;
 
-                //if(Encoder.isPressed() && doctorAnalyse!=0 || doctorAnalyse!= 1)
-                //{
-                //    Display.lcdClear();
-                //    Display.lcdPrint("Intet svar endnu");
-                //    System.Threading.Thread.Sleep(3000);
-                //}
+               //afventer svar
             }
             
             switch(doctorAnalyse)
