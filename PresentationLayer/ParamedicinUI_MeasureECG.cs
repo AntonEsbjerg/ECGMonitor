@@ -7,12 +7,13 @@ using System.Threading;
 using LogicLayer;
 using System.Data.SqlClient;
 using Microsoft.Data.SqlClient;
+using Extreme.Mathematics;
 using DTO;
 
 namespace PresentationLayer
 {
 
-    class ParamedicinUI_MeasureECG
+    public class ParamedicinUI_MeasureECG
     {
         MeasureECGControl eCGControl = new MeasureECGControl();
         static SerLCD Display;
@@ -25,6 +26,8 @@ namespace PresentationLayer
         public double[] ECGMaalinger { get; set; }
         private ADC1015 adc;
         private DTO_Measurement nyMaaling { get; set; }
+        private DTO_Patient patient;
+        private ParamedicinUI_RegistrerPatient paraRP;
 
         public ParamedicinUI_MeasureECG()
         {
@@ -32,17 +35,22 @@ namespace PresentationLayer
             ECGControl = new MeasureECGControl();
             Display = new SerLCD();
             Encoder = new TWIST();
+            paraRP = new ParamedicinUI_RegistrerPatient();
+            maalingID = new int();
+            
 
         }
         public void startMaaling(string CPRNumber)
         {
             byte c=0;
             byte d=0;
+            byte e = 0;
             bool udbryder = false;
             bool RPiAnalyse;
-            int doctorAnalyse=0;
+            int doctorAnalyse=2; // så der ikke er svar før lægen har indrapporteret det
             Display.lcdClear();
             Display.lcdNoBlink();
+            Display.lcdBlink();
             string[] ECGMenu = new string[3] { "Meassure ECG", "Start Maaling", "Tilbage"};
             foreach (var item in ECGMenu) // ECGMenu bliver indlæst
             {
@@ -60,6 +68,7 @@ namespace PresentationLayer
                     {
                         c = Convert.ToByte(i+1);
                         Display.lcdGotoXY(0, c);
+                        Display.lcdBlink();
                     }                          
                 }
                 if (Encoder.isPressed())
@@ -98,17 +107,35 @@ namespace PresentationLayer
             //Nu skal ECG oploades i databasen
             maalingID=ECGControl.convertToBlobAndUpload(eCGControl.GetLokalinfo()); // metoden går igennem logiklaget, så reglerne overholdes.
             //Nu er målingen uploaded og vi afventer nu svar fra hospitalet om hvad diagnosen er
-            while(doctorAnalyse != 0 || doctorAnalyse != 1) //ved værdi 0 er der ikke svar endnu. Ellers er der svar
+            Display.lcdClear();
+            string[] ECGtjekLaegeSvar = new string[2] { "Maaling foretaget", "Tjek Laege svar" };
+            foreach (var item in ECGtjekLaegeSvar)
             {
-                doctorAnalyse = ECGControl.confirmSTEMI(Convert.ToString(maalingID));
-                System.Threading.Thread.Sleep(5000);
+                Display.lcdGotoXY(0, e);
+                Display.lcdPrint(ECGtjekLaegeSvar[e]);
+                e++;
             }
+            while(true)
+            {
+                if (Encoder.isPressed())
+                {
+                    doctorAnalyse = ECGControl.confirmSTEMI(Convert.ToString(maalingID));
+                }
+                if (doctorAnalyse == 0 || doctorAnalyse == 1)
+                    break;
+                
+            }
+            //while (doctorAnalyse != 0 || doctorAnalyse != 1) //ved værdi 0 er der ikke svar endnu. Ellers er der svar
+            //{
+            //    doctorAnalyse = ECGControl.confirmSTEMI(Convert.ToString(maalingID));
+            //    System.Threading.Thread.Sleep(5000);
+            //}
             switch(doctorAnalyse)
             {
                 case 1:
                     alarmSTEMI();
                     break;
-                case 2:
+                case 0:
                     noSTEMI();
                     break;
             }
@@ -120,9 +147,36 @@ namespace PresentationLayer
         {
             double sample;
             tidspunktForMaaling = DateTime.Now;
+            ECGMaalinger = new double[500];
             eCGControl.GetLokalinfo()._start_tid = tidspunktForMaaling;
             eCGControl.GetLokalinfo()._dato = tidspunktForMaaling.Date;
-            Array.Clear(ECGMaalinger, 0, ECGMaalinger.Length);
+            eCGControl.GetLokalinfo()._antalmaalinger = 500;
+            eCGControl.GetLokalinfo()._samplerate_hz = 50;
+            eCGControl.GetLokalinfo()._interval_sec = 10;
+            eCGControl.GetLokalinfo()._interval_min = 0;
+            eCGControl.GetLokalinfo()._dataformat = "double";
+            eCGControl.GetLokalinfo()._sfp_maaltagerefternavn = "Mortensen";
+            eCGControl.GetLokalinfo()._sfp_maaltagerfornavn = "Lars";
+            eCGControl.GetLokalinfo()._sfp_maaltagermedarbjdnr = "1";
+            eCGControl.GetLokalinfo()._sfp_mt_kommentar = "";
+            eCGControl.GetLokalinfo()._sfp_mt_org = "Aarhus Universitet";
+            eCGControl.GetLokalinfo()._maaleformat_type = "double";
+            eCGControl.GetLokalinfo()._bin_eller_tekst = "1";
+            eCGControl.GetLokalinfo()._maaleenhed_identifikation = "RPi B3+";
+            eCGControl.GetLokalinfo()._borger_cprnr = Program.CPRNumber;
+            eCGControl.GetLokalinfo()._borger_fornavn = Program.BorgerFornavn;
+            eCGControl.GetLokalinfo()._borger_efternavn = Program.BorgerEfternavn;
+            eCGControl.GetLokalinfo()._kommentar = "";
+            
+
+            // Array.Clear(ECGMaalinger, 0, ECGMaalinger.Length);
+            if (ECGMaalinger.Length > 0)
+            {
+                for (int i = 0; i < ECGMaalinger.Length; i++)
+                {
+                    ECGMaalinger[i] = 0;
+                }
+            }
             for (int i = 0; i < 10 * 50; i++)
             {
                 //opsamler datapunkter og konvertere fra heltal i 11 bit format til volt:
@@ -144,14 +198,14 @@ namespace PresentationLayer
         {
             Display.lcdClear();
             byte d = 0;
-            string[] alarmSTEMI = new string[4] { "ECG-Analyseret", "Tegn på STEMI", "Nærmeste PCI-Center", "Vej 1, 8200" };
+            string[] alarmSTEMI = new string[4] { "ECG-Analyseret", "Tegn paa STEMI", "Naermeste PCI-Center", "Akutvej 1, 8200" };
             foreach (var item in alarmSTEMI) // AlarmsSTEMi bliver indlæst
             {
                 Display.lcdGotoXY(0, d);
                 Display.lcdPrint(alarmSTEMI[d]);
                 d++;
             }
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++)
             {
                 Display.lcdSetBackLight(255, 0, 0);
                 System.Threading.Thread.Sleep(250);
@@ -207,7 +261,7 @@ namespace PresentationLayer
         {
             Display.lcdClear();
             Display.lcdPrint("Mulig STEMI!");
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++)
             {
                 Display.lcdSetBackLight(255, 255, 0);
                 System.Threading.Thread.Sleep(250);

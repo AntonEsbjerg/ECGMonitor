@@ -15,17 +15,19 @@ namespace LogicLayer
       private List<DTO_Patient> patientData;
       string[] ikkeRegistreretP = new string[2] { "Personnummer ikke", "genkendt" };
       Person p;
+        public DTO_Patient patient;
 
       public RegistrerPatientControl()
       {
+         
          cprR = new CPR_Register();
          p = new Person();
          patientData = new List<DTO_Patient>();
+
          // ved ikke helt, hvad der skal implementeres
       }
       public string[] cardScan(string CPRNumber_)
       {
-
          //Parameter skulle have været "card"
          //Metode der skulle have scannet sygesikring
          //skal kalde validate, hvis true, så kald validated
@@ -65,6 +67,7 @@ namespace LogicLayer
       }
       public string[] patientValidated(string CPRNumber_)
       {
+         
          patientData = p.findData(CPRNumber_);
          string[] patienArr = new string[4];
          foreach (var data in patientData)
@@ -74,7 +77,8 @@ namespace LogicLayer
             patienArr[2] = data.Telfon_;
             patienArr[3] = data.Addresse_;
          }
-         return patienArr;
+         
+            return patienArr;
       }
    }
 

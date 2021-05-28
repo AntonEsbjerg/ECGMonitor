@@ -18,7 +18,10 @@ namespace PresentationLayer
         private static ParamedicinUI_MeasureECG measureECGUI;
         private static ParamedicinUI_VisBatteristatus visBatteristatusUI; 
         public static string CPRNumber { get; set; }
-        
+        public static string CPRNumber1 { get; set; }
+        public static string BorgerFornavn { get; set; }
+        public static string BorgerEfternavn { get; set; }
+
         static void Main(string[] args)
         {
             MeasureECGControl eCGControl = new MeasureECGControl();
@@ -28,6 +31,7 @@ namespace PresentationLayer
             registrerPatientUI = new ParamedicinUI_RegistrerPatient();
             measureECGUI = new ParamedicinUI_MeasureECG();
             visBatteristatusUI = new ParamedicinUI_VisBatteristatus();
+            //Nedenstående bliver sat her, da de alligevel er statiske til systemet.
             eCGControl.GetLokalinfo()._maaleenhed_identifikation = "1007";
             eCGControl.GetLokalinfo()._maaleformat_type = "double";
             eCGControl.GetLokalinfo()._samplerate_hz = 50;
@@ -44,7 +48,7 @@ namespace PresentationLayer
             Display.lcdClear();
             Display.lcdBlink();
             byte c = 0;
-            Display.lcdSetBackLight(0, 255, 0);
+            Display.lcdSetBackLight(0, 255, 0); // Vi ønsker at skærmen er grøn
 
             foreach(var item in hovedmenu) // Hovedmenu bliver indlæst
             {
@@ -59,21 +63,21 @@ namespace PresentationLayer
             {
                 int a = Encoder.getDiff(true);
                 if (a < 0)
-                    a = -a; // Hvis den er rullet negativt spejles tallet
+                    a = -a; // Hvis den er rullet negativt spejles tallet - det sikrer, at vores programs ikke crasher
 
                 for (int i = a; i >= 0; i = i - 4) //sikrer hele tiden, at man kun ruller mellem de mulige menuer
                 {
                     if (i < 4)
                     {
                         b = Convert.ToByte(i);
-                        Display.lcdGotoXY(0, b);
+                        Display.lcdGotoXY(0, b); // placere curserblink det ønskede sted
                         Display.lcdBlink();
                     }
                 }
 
                 if (Encoder.isPressed() == true) // Sender brugeren til den valgte menu
                 {
-                    switch (b)
+                    switch (b) // de 4 menuer 
                     {
                         case 0:
                            Display.lcdClear();

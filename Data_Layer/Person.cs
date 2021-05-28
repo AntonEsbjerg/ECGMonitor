@@ -19,8 +19,8 @@ namespace DataLayer
       {
          get
          {
-            var con = new SqlConnection(@"Data Source=DESKTOP-PDTN5JP\SQLEXPRESS;Initial Catalog=" + db + ";User ID=" + db + ";Password=" + db + ";Connect Timeout=30;Encrypt=False;TrustServerCertificate=False");
-            con.Open();
+            var con = new SqlConnection(@"Data Source=DESKTOP-PDTN5JP\SQLEXPRESS;Initial Catalog=LokalDatabase;User ID=LokalDatabase;Password=LokalDatabase;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+                con.Open();
             return con;
          }
       }
@@ -29,7 +29,7 @@ namespace DataLayer
          int result = 0;
 
          SqlDataReader rdr;
-         string selectString = "select * from CPR_register where CPRnr= '" + number + "'";
+         string selectString = "select * from db_owner.CPR_register where CPRnr= '" + number + "'";
 
          using (SqlCommand cmd = new SqlCommand(selectString, OpenConnectionST))
          {
@@ -41,16 +41,16 @@ namespace DataLayer
                 }
                 else
                     result = 2;
-            }
-         
-         return result;
-
-      }
+         }
+            OpenConnectionST.Close();
+            return result;
+        }
+        
       public List<DTO_Patient> findData(string number)
       {
          List<DTO_Patient> patientObjekter = new List<DTO_Patient>();
             SqlDataReader rdr;
-         string selectString = "select * from CPR_register where CPRnr= '" + number + "'";
+         string selectString = "select * from db_owner.CPR_register where CPRnr= '" + number + "'";
 
          using (SqlCommand cmd = new SqlCommand(selectString, OpenConnectionST))
          {
