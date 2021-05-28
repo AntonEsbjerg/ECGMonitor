@@ -23,7 +23,6 @@ namespace PresentationLayer
             Display = new SerLCD();
             Encoder = new TWIST();
             BstatusControl = new ShowbatterystatusControl();
-
         }
         public void visBatteristatus()
         {
@@ -65,12 +64,12 @@ namespace PresentationLayer
             Display.lcdClear();
             Display.lcdNoBlink();
             string a = Convert.ToString(Bstatus);
-            string[] NormalB = new string[4] { "Batteristatus:", a + "%", "Lavt batteriniveau!", "Tilbage" };
+            string[] LavB = new string[4] { "Batteristatus:", a + "%", "Lavt batteriniveau!", "Tilbage" };
             byte c = 0;
-            foreach (var item in NormalB) // Hovedmenu bliver indlæst
+            foreach (var item in LavB) // Hovedmenu bliver indlæst
             {
                 Display.lcdGotoXY(0, c);
-                Display.lcdPrint(NormalB[c]);
+                Display.lcdPrint(LavB[c]);
                 c++;
             }
             Display.lcdBlink();
@@ -78,7 +77,7 @@ namespace PresentationLayer
             while (true)
             {
                 if (Encoder.isPressed())
-                    Program.mainMenu();
+                    Program.mainMenu(); // der vendes retur til hovedmenu
             }
         }
     }
