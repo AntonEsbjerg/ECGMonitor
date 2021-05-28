@@ -107,6 +107,7 @@ namespace PresentationLayer
             //Nu skal ECG oploades i databasen
             maalingID=ECGControl.convertToBlobAndUpload(eCGControl.GetLokalinfo()); // metoden går igennem logiklaget, så reglerne overholdes.
             //Nu er målingen uploaded og vi afventer nu svar fra hospitalet om hvad diagnosen er
+            Display.lcdClear();
             string[] ECGtjekLaegeSvar = new string[2] { "Maaling foretaget", "Tjek Laege svar" };
             foreach (var item in ECGtjekLaegeSvar)
             {
@@ -134,7 +135,7 @@ namespace PresentationLayer
                 case 1:
                     alarmSTEMI();
                     break;
-                case 2:
+                case 0:
                     noSTEMI();
                     break;
             }
@@ -197,14 +198,14 @@ namespace PresentationLayer
         {
             Display.lcdClear();
             byte d = 0;
-            string[] alarmSTEMI = new string[4] { "ECG-Analyseret", "Tegn på STEMI", "Nærmeste PCI-Center", "Vej 1, 8200" };
+            string[] alarmSTEMI = new string[4] { "ECG-Analyseret", "Tegn paa STEMI", "Naermeste PCI-Center", "Akutvej 1, 8200" };
             foreach (var item in alarmSTEMI) // AlarmsSTEMi bliver indlæst
             {
                 Display.lcdGotoXY(0, d);
                 Display.lcdPrint(alarmSTEMI[d]);
                 d++;
             }
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++)
             {
                 Display.lcdSetBackLight(255, 0, 0);
                 System.Threading.Thread.Sleep(250);
@@ -260,7 +261,7 @@ namespace PresentationLayer
         {
             Display.lcdClear();
             Display.lcdPrint("Mulig STEMI!");
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++)
             {
                 Display.lcdSetBackLight(255, 255, 0);
                 System.Threading.Thread.Sleep(250);
