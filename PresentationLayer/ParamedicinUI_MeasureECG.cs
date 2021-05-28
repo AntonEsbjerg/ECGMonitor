@@ -115,7 +115,14 @@ namespace PresentationLayer
                     doctorAnalyse = ECGControl.confirmSTEMI(Convert.ToString(maalingID));
                 }
                 if (doctorAnalyse == 0 || doctorAnalyse == 1)
-                    break;                
+                    break;
+
+                //if(Encoder.isPressed() && doctorAnalyse!=0 || doctorAnalyse!= 1)
+                //{
+                //    Display.lcdClear();
+                //    Display.lcdPrint("Intet svar endnu");
+                //    System.Threading.Thread.Sleep(3000);
+                //}
             }
             
             switch(doctorAnalyse)
