@@ -8,8 +8,6 @@ namespace DataLayer
 {
    public class Person
    {
-      private const string db = "LokalDatabase";
-
       public Person()
         {
 

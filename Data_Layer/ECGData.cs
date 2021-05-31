@@ -10,10 +10,7 @@ namespace DataLayer
 {
     public class ECGData
     {
-      private const string db = "LokalDatabase";
       private DTO_Measurement lokalinfo;
-      
-
         public ECGData()
         {
             
