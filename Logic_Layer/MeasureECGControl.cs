@@ -20,11 +20,7 @@ namespace LogicLayer
         {
             ecgData = new ECGData();
             maalingID = new int();
-        }
-        public void startECG()
-        {
-            //måske den skal slettes herfra igen
-        }
+        }        
         public DTO_Measurement GetLokalinfo()
         {
             DTO_Measurement info = ecgData.lokalmaaling();
@@ -91,7 +87,6 @@ namespace LogicLayer
         public int convertToBlobAndUpload(DTO_Measurement nyMaaling)
         {
             //Konvertering sker direkte i datalag
-            //nyMaaling._STEMI_suspected=analyzeECG(nyMaaling._lokalECG)
             
             maalingID = ecgData.uploadECG(nyMaaling);
             return maalingID;
