@@ -10,11 +10,11 @@ namespace LogicLayer
     public class ShowbatterystatusControl
     {
         private int batteristatus;
-        private Battery batteryData;
+        //private Battery batteryData;
 
         public ShowbatterystatusControl()
         {
-            batteryData = new Battery();
+            //batteryData = new Battery(); Værdien hentes ikke fra data pga RPi
         }
         public int requestbatterystatus(int ADCValue)
         {
@@ -49,7 +49,7 @@ namespace LogicLayer
                 batteristatus = 1;
             }
 
-            //batteristatus = batteryData.getbatterystatus();
+            //batteristatus = batteryData.getbatterystatus(); - sample skulle gerne have været hentet fra datalag, men det kan ikke pga RPi
 
             return batteristatus;
 

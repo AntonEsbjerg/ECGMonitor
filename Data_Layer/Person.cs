@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-//using System.Data.SqlClient;
 using DTO;
 using Microsoft.Data.SqlClient;
 

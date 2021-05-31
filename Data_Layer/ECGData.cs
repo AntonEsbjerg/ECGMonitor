@@ -31,13 +31,10 @@ namespace DataLayer
         }
         public DTO_Measurement lokalmaaling()
         {
-            //DTO_Measurement lokalinfo;
-            //lokalinfo = new DTO_Measurement();
             return lokalinfo;
         }
         public int uploadECG(DTO_Measurement nyMaaling)
         {
-            int maalingID = 0;
             double[] tal;
             double[] ecgVoltage = new double[500];
             string insertStringDLEDBData = "INSERT INTO db_owner.EKGDATA (raa_data,samplerate_hz,interval_sec,interval_min,data_format," +
@@ -63,9 +60,6 @@ namespace DataLayer
                 command.Parameters.AddWithValue("@borger_cprnr", nyMaaling._borger_cprnr);
                 command.Parameters.AddWithValue("@stemi_mistaenkt", nyMaaling._STEMI_suspected);
 
-                //command.ExecuteNonQuery();
-                //nyMaaling._ekgmaaleid = (int)command.ExecuteScalar();
-                //maalingID = Convert.ToInt32(command.ExecuteScalar());
                 nyMaaling._ekgmaaleid = Convert.ToInt32(command.ExecuteScalar());
             }
             using (SqlCommand command = new SqlCommand(insertStringDLEDBData, connect))
@@ -88,7 +82,7 @@ namespace DataLayer
                 command.Parameters.AddWithValue("@ekgmaaleid", nyMaaling._ekgmaaleid);
                 command.Parameters.AddWithValue("@maalenehed_identifikation", nyMaaling._maaleenhed_identifikation);
                 command.ExecuteScalar();
-                //command.ExecuteNonQuery();
+
                 connect.Close();
                 return nyMaaling._ekgmaaleid;
             }
